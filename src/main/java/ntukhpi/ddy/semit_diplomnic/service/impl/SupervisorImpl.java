@@ -3,9 +3,11 @@ package ntukhpi.ddy.semit_diplomnic.service.impl;
 import ntukhpi.ddy.semit_diplomnic.entity.Supervisor;
 import ntukhpi.ddy.semit_diplomnic.repository.SupervisorRepository;
 import ntukhpi.ddy.semit_diplomnic.service.SupervisorService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class SupervisorImpl implements SupervisorService{
     private SupervisorRepository supervisorRepository;
 

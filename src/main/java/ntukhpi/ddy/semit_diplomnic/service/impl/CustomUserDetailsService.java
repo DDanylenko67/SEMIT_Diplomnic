@@ -30,7 +30,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (user != null) {
             return new org.springframework.security.core.userdetails.User(user.getLogin(),
                     user.getPassword(),
-                    mapRolesToAuthorities(user.getRoles()));
+                    mapRolesToAuthorities((Collection<Role>) user.getRoles()));
         }else{
             throw new UsernameNotFoundException("Не правильна пошта або пароль.");
         }

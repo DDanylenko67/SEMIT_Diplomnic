@@ -5,9 +5,11 @@ import ntukhpi.ddy.semit_diplomnic.entity.Theme;
 import ntukhpi.ddy.semit_diplomnic.repository.StudentRepository;
 import ntukhpi.ddy.semit_diplomnic.repository.ThemeRepository;
 import ntukhpi.ddy.semit_diplomnic.service.ThemeService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class ThemeImpl implements ThemeService {
 
     private ThemeRepository themeRepository;
@@ -35,13 +37,17 @@ public class ThemeImpl implements ThemeService {
 
     @Override
     public Theme getThemeByStudent(Student student) {
-        Student FindToStudent = studentRepository.findByEmail(student.getEmail());
+        Student FindToStudent = studentRepository.findById(student.getId()).orElse(null);
         return FindToStudent.getTheme();
     }
 
     @Override
     public Theme saveTheme(Theme theme) {
-        return themeRepository.save(theme);
+        themeRepository.save(theme);
+        Student student =  studentRepository.findByEmail(themeRepository.findByThemeNameUA(theme.getThemeNameUA()).getStudent().getEmail());
+        student.setTheme(theme);
+        studentRepository.save(student);
+        return theme;
     }
 
     @Override
