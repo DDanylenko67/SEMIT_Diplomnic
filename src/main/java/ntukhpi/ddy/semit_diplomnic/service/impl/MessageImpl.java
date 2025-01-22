@@ -5,9 +5,11 @@ import ntukhpi.ddy.semit_diplomnic.entity.Student;
 import ntukhpi.ddy.semit_diplomnic.entity.Supervisor;
 import ntukhpi.ddy.semit_diplomnic.repository.MessageRepository;
 import ntukhpi.ddy.semit_diplomnic.service.MessageService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class MessageImpl implements MessageService {
 
     private MessageRepository messageRepository;

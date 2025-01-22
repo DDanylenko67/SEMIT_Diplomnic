@@ -1,5 +1,8 @@
 package ntukhpi.ddy.semit_diplomnic.service.impl;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import ntukhpi.ddy.semit_diplomnic.entity.*;
 import ntukhpi.ddy.semit_diplomnic.repository.RoleRepository;
 import ntukhpi.ddy.semit_diplomnic.repository.StudentRepository;
@@ -7,6 +10,7 @@ import ntukhpi.ddy.semit_diplomnic.repository.SupervisorRepository;
 import ntukhpi.ddy.semit_diplomnic.repository.UserRepository;
 import ntukhpi.ddy.semit_diplomnic.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Service
 public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
@@ -37,42 +42,50 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void saveUserSupervisor(UserDto userDto) {
-        createUser(userDto, "ROLE_SUPERVISOR");
-        Supervisor supervisor = new Supervisor();
-        supervisor.setName(userDto.getName());
-        supervisor.setEmail(userDto.getEmail());
-        supervisor.setAcademicRang(userDto.getAcademicRang());
-        supervisor.setAcademicDegree(userDto.getAcademicDegree());
-        supervisor.setUser(userRepository.findByLogin(userDto.getEmail()));
-        supervisorRepository.save(supervisor);
+        if(userRepository.findByLogin(userDto.getEmail()) == null) {
+            createUser(userDto, "ROLE_SUPERVISOR");
+            Supervisor supervisor = new Supervisor();
+            supervisor.setName(userDto.getName());
+            supervisor.setEmail(userDto.getEmail());
+            supervisor.setAcademicRang(userDto.getAcademicRang());
+            supervisor.setAcademicDegree(userDto.getAcademicDegree());
+            supervisor.setUser(userRepository.findByLogin(userDto.getEmail()));
+            supervisorRepository.save(supervisor);
+        }
     }
 
     @Override
+    @Transactional
     public void saveUserStudent(UserDto userDto) {
-        createUser(userDto, "ROLE_STUDENT");
-        Student student = new Student();
-        student.setName(userDto.getName());
-        student.setEmail(userDto.getEmail());
-        student.setUniversityGroup(userDto.getUniversityGroup());
-        student.setSupervisor(userDto.getSupervisor());
-        student.setGroup(userDto.getStudentGroup());
-        student.setUser(userRepository.findByLogin(userDto.getEmail()));
-        studentRepository.save(student);
+        if(userRepository.findByLogin(userDto.getEmail()) == null) {
+            createUser(userDto, "ROLE_STUDENT");
+            Student student = new Student();
+            student.setName(userDto.getName());
+            student.setEmail(userDto.getEmail());
+            student.setUniversityGroup(userDto.getUniversityGroup());
+            student.setSupervisor(userDto.getSupervisor());
+            student.setGroup(userDto.getStudentGroup());
+            student.setUser(userRepository.findByLogin(userDto.getEmail()));
+            studentRepository.save(student);
+        }
     }
 
-    private void createUser(UserDto userDto, String roles) {
+    @Transactional
+    public void createUser(UserDto userDto, String roles) {
         User user = new User();
         user.setLogin(userDto.getEmail());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate date = LocalDate.now();
-        String formattedDate = date.format(formatter);
         user.setDateOfCreate(LocalDate.now());
         Role role = roleRepository.findByName(roles);
+
         if(role == null){
-            role = checkRoleExist();
+            System.out.println("HELLLO");
+            role = checkRoleExist(roles);
         }
+        System.out.println(role.getName());
+        System.out.println(role.getId());
         user.setRoles(Arrays.asList(role));
+        System.out.println(user);
         userRepository.save(user);
     }
     @Override
@@ -112,9 +125,9 @@ public class UserServiceImpl implements UserService {
         return userDto;
     }
 
-    private Role checkRoleExist(){
+    private Role checkRoleExist(String name){
         Role role = new Role();
-        role.setName("ROLE_SUPERVISOR");
+        role.setName(name);
         return roleRepository.save(role);
     }
 

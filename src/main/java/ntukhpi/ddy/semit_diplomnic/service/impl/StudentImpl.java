@@ -3,9 +3,11 @@ package ntukhpi.ddy.semit_diplomnic.service.impl;
 import ntukhpi.ddy.semit_diplomnic.entity.Student;
 import ntukhpi.ddy.semit_diplomnic.repository.StudentRepository;
 import ntukhpi.ddy.semit_diplomnic.service.StudentService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class StudentImpl implements StudentService {
 
     private StudentRepository studentRepository;

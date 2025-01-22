@@ -5,9 +5,12 @@ import ntukhpi.ddy.semit_diplomnic.entity.Task;
 import ntukhpi.ddy.semit_diplomnic.repository.StudentRepository;
 import ntukhpi.ddy.semit_diplomnic.repository.TaskRepository;
 import ntukhpi.ddy.semit_diplomnic.service.TaskService;
+import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
+@Service
 public class TaskImpl implements TaskService {
 
     private TaskRepository taskRepository;
@@ -41,6 +44,7 @@ public class TaskImpl implements TaskService {
     @Override
     public Task updateTask(Long id, Task task) {
         task.setId(id);
+        task.setDateOfUpdate(LocalDate.now());
         return taskRepository.save(task);
     }
 
