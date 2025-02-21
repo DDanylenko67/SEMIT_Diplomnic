@@ -8,6 +8,9 @@ import ntukhpi.ddy.semit_diplomnic.enums.status.statusConverter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @NoArgsConstructor
@@ -24,30 +27,46 @@ public class Task {
     @Column(nullable = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfCreate;
+    @Column(nullable = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate deadline;
     @Column
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfUpdate;
-    @Enumerated(EnumType.STRING)
-    @Column(name = "themeStatus")
-    @Convert(converter = statusConverter.class)
-    private status status;
     @ManyToOne
     @JoinColumn(name = "supervisor_id")
     private Supervisor supervisor;
-    @ManyToOne
-    @JoinColumn(name = "student_id")
-    private Student student;
-
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<TaskAssignment> assignments = new ArrayList<>();
+    @ManyToMany(mappedBy = "tasks", fetch = FetchType.EAGER)
+    private List<StudentGroup> studentGroups = new ArrayList<>();
     public Task(){
 
     }
 
-    public Task(String title, String description, Supervisor supervisor, Student student) {
+
+    public Task(String title, String description, Supervisor supervisor, LocalDate deadLine, List<StudentGroup> groups) {
         this.title = title;
         this.dateOfCreate = LocalDate.now();
         this.description = description;
         this.supervisor = supervisor;
-        this.student = student;
+        this.deadline = deadLine;
+        this.studentGroups = groups;
+    }
+    public void setStudentGroups(List<StudentGroup> studentGroups) {
+        this.studentGroups = studentGroups;
+    }
+
+    public List<StudentGroup> getStudentGroups() {
+        return studentGroups;
+    }
+
+    public List<TaskAssignment> getAssignments() {
+        return assignments;
+    }
+
+    public LocalDate getDeadline() {
+        return deadline;
     }
 
     public Long getId() {
@@ -70,16 +89,16 @@ public class Task {
         return dateOfUpdate;
     }
 
-    public ntukhpi.ddy.semit_diplomnic.enums.status.status getStatus() {
-        return status;
-    }
-
     public Supervisor getSupervisor() {
         return supervisor;
     }
 
-    public Student getStudent() {
-        return student;
+    public void setDeadline(LocalDate deadline) {
+        this.deadline = deadline;
+    }
+
+    public void setAssignments(List<TaskAssignment> assignments) {
+        this.assignments = assignments;
     }
 
     public void setId(Long id) {
@@ -102,15 +121,9 @@ public class Task {
         this.dateOfUpdate = dateOfUpdate;
     }
 
-    public void setStatus(ntukhpi.ddy.semit_diplomnic.enums.status.status status) {
-        this.status = status;
-    }
 
     public void setSupervisor(Supervisor supervisor) {
         this.supervisor = supervisor;
     }
 
-    public void setStudent(Student student) {
-        this.student = student;
-    }
 }

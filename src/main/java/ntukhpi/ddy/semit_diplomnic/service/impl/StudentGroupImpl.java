@@ -74,6 +74,11 @@ public class StudentGroupImpl implements StudentGroupService {
     }
 
     @Override
+    public List<StudentGroup> getStudetsGroupBySupervisor(Supervisor supervisor) {
+        return studentGroupRepository.findStudentGroupsBySupervisor(supervisor);
+    }
+
+    @Override
     public void deleteStudentGroupById(Long id) {
         studentGroupRepository.deleteById(id);
     }

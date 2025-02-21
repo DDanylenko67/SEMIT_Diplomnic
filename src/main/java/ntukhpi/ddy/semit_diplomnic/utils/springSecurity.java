@@ -22,12 +22,12 @@ public class springSecurity {
     public static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/**").permitAll()
+                        .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+                        .anyRequest().authenticated()
                 )
 
                 .formLogin(
@@ -35,6 +35,7 @@ public class springSecurity {
                                 .loginPage("/login")
                                 .loginProcessingUrl("/login")
                                 .defaultSuccessUrl("/diplomnic")
+                                .failureUrl("/login?error=true")
                                 .permitAll()
                 )
                 .logout(

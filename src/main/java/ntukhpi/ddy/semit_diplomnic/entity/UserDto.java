@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDto {
@@ -22,7 +24,7 @@ public class UserDto {
     private String academicDegree;
     private String universityGroup;
     private Supervisor supervisor;
-    private StudentGroup studentGroup;
+    private List<StudentGroup> studentGroups;
     private Theme theme;
     private Role role;
 
@@ -38,12 +40,11 @@ public class UserDto {
         this.academicDegree = academicDegree;
     }
 
-    public UserDto(String name, String email, String universityGroup, Supervisor supervisor, StudentGroup studentGroup, String password){
+    public UserDto(String name, String email, String universityGroup,  List<StudentGroup> studentGroups, String password){
         this.name = name;
         this.email = email;
         this.universityGroup = universityGroup;
-        this.supervisor = supervisor;
-        this.studentGroup = studentGroup;
+        this.studentGroups = studentGroups;
         this.password = password;
     }
 
@@ -80,8 +81,8 @@ public class UserDto {
         return supervisor;
     }
 
-    public StudentGroup getStudentGroup() {
-        return studentGroup;
+    public List<StudentGroup> getStudentGroups() {
+        return studentGroups;
     }
 
     public Theme getTheme() {
@@ -124,8 +125,8 @@ public class UserDto {
         this.supervisor = supervisor;
     }
 
-    public void setStudentGroup(StudentGroup studentGroup) {
-        this.studentGroup = studentGroup;
+    public void setStudentGroup(List<StudentGroup> studentGroup) {
+        this.studentGroups = studentGroup;
     }
 
     public void setTheme(Theme theme) {

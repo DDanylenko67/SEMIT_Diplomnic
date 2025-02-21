@@ -4,10 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import ntukhpi.ddy.semit_diplomnic.entity.*;
-import ntukhpi.ddy.semit_diplomnic.repository.RoleRepository;
-import ntukhpi.ddy.semit_diplomnic.repository.StudentRepository;
-import ntukhpi.ddy.semit_diplomnic.repository.SupervisorRepository;
-import ntukhpi.ddy.semit_diplomnic.repository.UserRepository;
+import ntukhpi.ddy.semit_diplomnic.repository.*;
 import ntukhpi.ddy.semit_diplomnic.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,6 +13,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,17 +25,19 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
     private SupervisorRepository supervisorRepository;
     private StudentRepository studentRepository;
+    private StudentGroupRepository studentGroupRepository;
 
     public UserServiceImpl(UserRepository userRepository,
                            RoleRepository roleRepository,
                            PasswordEncoder passwordEncoder,
                            SupervisorRepository supervisorRepository,
-                           StudentRepository studentRepository) {
+                           StudentRepository studentRepository, StudentGroupRepository studentGroupRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.studentRepository = studentRepository;
         this.supervisorRepository = supervisorRepository;
+        this.studentGroupRepository = studentGroupRepository;
     }
 
     @Override
@@ -63,8 +63,7 @@ public class UserServiceImpl implements UserService {
             student.setName(userDto.getName());
             student.setEmail(userDto.getEmail());
             student.setUniversityGroup(userDto.getUniversityGroup());
-            student.setSupervisor(userDto.getSupervisor());
-            student.setGroup(userDto.getStudentGroup());
+            student.setGroup(userDto.getStudentGroups());
             student.setUser(userRepository.findByLogin(userDto.getEmail()));
             studentRepository.save(student);
         }
@@ -77,9 +76,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         user.setDateOfCreate(LocalDate.now());
         Role role = roleRepository.findByName(roles);
-
         if(role == null){
-            System.out.println("HELLLO");
             role = checkRoleExist(roles);
         }
         System.out.println(role.getName());
@@ -109,7 +106,6 @@ public class UserServiceImpl implements UserService {
             userDto.setName(student.getName());
             userDto.setEmail(student.getEmail());
             userDto.setUniversityGroup(student.getUniversityGroup());
-            userDto.setSupervisor(student.getSupervisor());
             userDto.setStudentGroup(student.getGroup());
             userDto.setTheme(student.getTheme());
             userDto.setRole(user.getRoles().get(0));

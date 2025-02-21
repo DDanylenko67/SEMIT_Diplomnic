@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface SupervisorService {
     List<Supervisor> getAllSupervisors();
+    Supervisor findSupervisorByEmail(String email);
     Supervisor saveSupervisor(Supervisor supervisor);
     Supervisor getSupervisorById(Long id);
     Supervisor updateSupervisor(Long id, Supervisor supervisor);

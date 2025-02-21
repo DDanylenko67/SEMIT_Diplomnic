@@ -22,6 +22,11 @@ public class SupervisorImpl implements SupervisorService{
     }
 
     @Override
+    public Supervisor findSupervisorByEmail(String email) {
+        return supervisorRepository.findByEmail(email);
+    }
+
+    @Override
     public Supervisor saveSupervisor(Supervisor supervisor) {
         return supervisorRepository.save(supervisor);
     }

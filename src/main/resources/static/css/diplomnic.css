@@ -1,0 +1,62 @@
+body{
+    font-family: Roboto, sans-serif;
+    background-image: url(/static/images/background_3.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.supervisor-container{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+.diplomnik-card {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 1000px;
+    min-width: 50%;
+    list-style-type:  none;
+    margin-bottom: 2rem;
+    margin-top: 2rem;
+}
+.students{
+    padding: 1rem 0.5rem 0.5rem 1rem;
+}
+.group-block{
+    margin-bottom: 10px
+}
+.link-text{
+    text-decoration: none;
+    color: white;
+}
+.head{
+    background-color: #9F1C21;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 1rem 1rem 0.3rem 1.5rem;
+}
+.update{
+    text-decoration: none;
+    color: #E0D9D9;
+    margin-bottom: 15px;
+}
+.non-button{
+    text-decoration: none;
+    width: 150px;
+    height: 3rem;
+    border: 2px solid #9F1C21;
+    color: #9F1C21;
+    background-color: white;
+    border-radius: 10px;
+}
+.left{
+    font-size: 20px;
+    padding: 0.5rem;
+}

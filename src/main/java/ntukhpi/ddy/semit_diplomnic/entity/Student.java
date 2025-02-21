@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @NoArgsConstructor
 @Entity
@@ -19,12 +22,27 @@ public class Student {
     private String email;
     @Column(nullable = false, length = 10)
     private String universityGroup;
-    @ManyToOne
-    @JoinColumn(name = "supervisor_id", unique = false)
-    private Supervisor supervisor;
-    @ManyToOne
-    @JoinColumn(name = "studentGroup_id", unique = false)
-    private StudentGroup group;
+    @ManyToMany(mappedBy = "students")
+    private List<StudentGroup> groups = new ArrayList<>();
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<TaskAssignment> assignments = new ArrayList<>();
+
+    public void setGroups(List<StudentGroup> groups) {
+        this.groups = groups;
+    }
+
+    public void setAssignments(List<TaskAssignment> assignments) {
+        this.assignments = assignments;
+    }
+
+    public List<TaskAssignment> getAssignments() {
+        return assignments;
+    }
+
+    public List<StudentGroup> getGroups() {
+        return groups;
+    }
+
     @OneToOne
     @JoinColumn(name = "theme_id", unique = false)
     private Theme theme;
@@ -48,12 +66,9 @@ public class Student {
         return universityGroup;
     }
 
-    public Supervisor getSupervisor() {
-        return supervisor;
-    }
 
-    public StudentGroup getGroup() {
-        return group;
+    public List<StudentGroup> getGroup() {
+        return groups;
     }
 
     public Theme getTheme() {
@@ -80,12 +95,8 @@ public class Student {
         this.universityGroup = universityGroup;
     }
 
-    public void setSupervisor(Supervisor supervisor) {
-        this.supervisor = supervisor;
-    }
-
-    public void setGroup(StudentGroup group) {
-        this.group = group;
+    public void setGroup(List<StudentGroup> group) {
+        this.groups = group;
     }
 
     public void setTheme(Theme theme) {

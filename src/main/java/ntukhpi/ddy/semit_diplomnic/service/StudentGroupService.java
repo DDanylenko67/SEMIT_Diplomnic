@@ -16,5 +16,6 @@ public interface StudentGroupService {
     StudentGroup updateStudentGroup(Long id, StudentGroup studentGroup);
     StudentGroup addStudentInGroup(Student student, StudentGroup studentGroup);
     StudentGroup addStudentsInGroup(List<Student> students, StudentGroup studentGroup);
+    List<StudentGroup> getStudetsGroupBySupervisor(Supervisor supervisor);
     void deleteStudentGroupById(Long id);
 }

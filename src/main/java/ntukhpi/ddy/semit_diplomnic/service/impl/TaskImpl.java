@@ -26,10 +26,6 @@ public class TaskImpl implements TaskService {
         return taskRepository.findAll();
     }
 
-    @Override
-    public List<Task> getAllTasksByStudent(Student student) {
-        return taskRepository.findTasksByStudent(student);
-    }
 
     @Override
     public Task getTaskById(Long id) {
@@ -44,8 +40,12 @@ public class TaskImpl implements TaskService {
     @Override
     public Task updateTask(Long id, Task task) {
         task.setId(id);
-        task.setDateOfUpdate(LocalDate.now());
         return taskRepository.save(task);
+    }
+
+    @Override
+    public Task getTaskByDateAndDescriptionAndTitle(LocalDate date, String description, String title) {
+        return taskRepository.findTaskByDateOfCreateAndDescriptionAndTitle(date, description, title);
     }
 
     @Override

@@ -2,7 +2,9 @@ package ntukhpi.ddy.semit_diplomnic.enums.status;
 
 
 public enum status {
+    suggested("запропоноване"),
     done("зроблено"),
+    inProgress("виконується"),
     checking("перевіряється"),
     rejected("відхілено");
 

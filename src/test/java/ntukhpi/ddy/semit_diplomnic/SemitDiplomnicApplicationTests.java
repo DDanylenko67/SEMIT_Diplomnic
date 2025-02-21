@@ -7,9 +7,12 @@ import ntukhpi.ddy.semit_diplomnic.service.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @SpringBootTest
@@ -29,6 +32,8 @@ class SemitDiplomnicApplicationTests {
 	private TaskService taskService;
 	@Autowired
 	private MessageService messageService;
+	@Autowired
+	private TaskAssignmentService taskAssignmentService;
 
 	@Test
 	void addSupervisor() {
@@ -37,30 +42,43 @@ class SemitDiplomnicApplicationTests {
 	}
 	@Test
 	void addStudentGroup() {
-		StudentGroup studentGroup = new StudentGroup("Бакалаври-2025", groupType.bachelor, supervisorService.getSupervisorById(1L));
+		StudentGroup studentGroup = new StudentGroup("Бакалаври 2025", groupType.bachelor, supervisorService.getSupervisorById(1L), "1L4gl2qW");
 		studentGroupService.saveStudentGroup(studentGroup);
+		StudentGroup studentGroup1 = new StudentGroup("Магістри-2025-2026", groupType.master, supervisorService.getSupervisorById(1L), "8aiml7nH");
+		studentGroupService.saveStudentGroup(studentGroup1);
 	}
 
 	@Test
 	void addStudent(){
-		StudentGroup studentGroup = studentGroupService.getStudentGroupById(1L);
-		UserDto student1 = new UserDto("Даниленко Денис Юрійович", "denisdanilenko12321@gmail.com", "КН-221в",
-				supervisorService.getSupervisorById(1L), studentGroup, "password");
+		List<StudentGroup> groups = new ArrayList<>();
+		groups.add(studentGroupService.getStudentGroupById(1L));
+		groups.add(studentGroupService.getStudentGroupById(2L));
+		UserDto student1 = new UserDto("Даниленко Денис Юрійович", "danilenkodenis12321@gmail.com", "КН-221в",
+				 groups, "password");
 		userService.saveUserStudent(student1);
 		Student student = studentService.getStudentByName(student1.getName());
-		studentGroupService.addStudentInGroup(student, studentGroup);
-		List<Student> students = studentGroupService.getStudentsByStudentGroupName(studentGroup.getGroupName());
-		for (Student s : students) {
-			System.out.println(s.getName());
+		studentGroupService.addStudentInGroup(student, studentGroupService.getStudentGroupById(1L));
+		studentGroupService.addStudentInGroup(student, studentGroupService.getStudentGroupById(2L));
+
+	}
+	@Test
+	@Transactional
+	void getGroups(){
+		Student student = studentService.getStudentByName("Даниленко Денис Юрійович");
+		List<StudentGroup> groups = student.getGroup();
+		for(StudentGroup group : groups){
+			System.out.println(group.getGroupName());
 		}
 	}
 	@Test
 	void addStudents(){
 		StudentGroup studentGroup = studentGroupService.getStudentGroupById(1L);
-		UserDto student1 = new UserDto("Кирило Буряк Сергійович", "kirilbyriy123@gmail.com", "КН-221б",
-				supervisorService.getSupervisorById(1L), studentGroup, "password");
-		UserDto student2 = new UserDto("Валентин Вітайлович Литовченко", "madvalik213@gmail.com", "КН-221в",
-				supervisorService.getSupervisorById(1L), studentGroup, "password");
+		List<StudentGroup> groups = new ArrayList<>();
+		groups.add(studentGroup);
+		UserDto student1 = new UserDto("Буряк Кирило Сергійович", "kirilbyriy123@gmail.com", "КН-221б",
+				 groups, "password");
+		UserDto student2 = new UserDto("Ілля Євсієнко В'ячеславович", "madvalik213@gmail.com", "КН-221в",
+				groups, "password");
 		userService.saveUserStudent(student1);
 		userService.saveUserStudent(student2);
 		List<Student> students = new ArrayList<>();
@@ -81,26 +99,76 @@ class SemitDiplomnicApplicationTests {
 	@Test
 	void updateStudent() {
 		StudentGroup studentGroup = studentGroupService.getStudentGroupById(1L);
-		Student student = studentService.getStudentByName("Валентин Вітайлович Литовченко");
-		student.setName("Валентин Литовченко Вітайлович");
+		Student student = studentService.getStudentByName("Ілля Євсієнко В'ячеславович");
+		student.setName("Євсієнко Ілля В'ячеславович");
 		studentGroup.setGroupName("Бакалаври 2024-2025");
 		studentGroupService.updateStudentGroup(studentGroup.getId(), studentGroup);
 		studentService.updateStudent(student.getId(), student);
 	}
 
 	@Test
-	void addTask(){
-		Student student = studentService.getStudentById(1L);
+	void saveTask(){
+		LocalDate date = LocalDate.now().plusMonths(1);
+		List<StudentGroup> groups = new ArrayList<>();
 		Supervisor supervisor = supervisorService.getSupervisorById(1L);
-		Task task = new Task("Титульні аркуші", "Створити титульні аруші для пояснювальної записки", supervisor, student);
+		StudentGroup group = studentGroupService.getStudentGroupById(1L);
+		groups.add(group);
+		Task task = new Task("Титульні аркуші", "Створити титульні аркуші для пояснювальної записки", supervisor, date, groups);
 		taskService.saveTask(task);
 	}
+	@Test
+	void saveTasksGroup(){
+		StudentGroup group = studentGroupService.getStudentGroupById(1L);
+		Task task = taskService.getTaskById(2L);
+		group.getTasks().add(task);
+		studentGroupService.updateStudentGroup(group.getId(), group);
+	}
+	@Test
+	void addTaskAssigment(){
+		Student student = studentService.getStudentById(1L);
+		Task task = taskService.getTaskById(1L);
+		System.out.println(task.getTitle());
+		TaskAssignment taskAssignment = new TaskAssignment(task, student, status.inProgress);
+		taskAssignmentService.saveTaskAssignment(taskAssignment);
+		student.getAssignments().add(taskAssignment);
+		task.getAssignments().add(taskAssignment);
+		taskService.updateTask(task.getId(), task);
+		studentService.updateStudent(student.getId(), student);
+	}
+	
 	@Test
 	void updateTask(){
 		Task task = taskService.getTaskById(1L);
 		task.setDescription("Створити титульні аркуші для пояснювальної записки");
-		task.setStatus(status.rejected);
 		taskService.updateTask(task.getId(), task);
+	}
+
+	@Test
+	void deleteStudentFromGroup(){
+		Student student = studentService.getStudentByEmail("hguev123@khpi.edu.ua");
+		StudentGroup studentGroup =  studentGroupService.getStudentGroupById(1L);
+		studentGroup.getStudents().remove(student);
+		studentGroupService.updateStudentGroup(studentGroup.getId(), studentGroup);
+	}
+
+	@Test
+	void deleteTask(){
+		Task task = taskService.getTaskById(17L);
+		for(TaskAssignment taskAssignment : task.getAssignments()){
+			if(taskAssignment != null){
+				taskAssignmentService.deleteTaskAssignmentById(taskAssignment.getId());
+			}
+		}
+		List<StudentGroup> studentGroups = new ArrayList<>(task.getStudentGroups());
+		for(StudentGroup studentGroup : studentGroups){
+			if(studentGroup != null){
+				studentGroupService.deleteStudentGroupById(studentGroup.getId());
+			}
+		}
+		task.getAssignments().clear();
+		task.getStudentGroups().clear();
+		taskService.updateTask(task.getId(), task);
+		taskService.deleteTaskById(task.getId());
 	}
 	@Test
 	void addTheme(){

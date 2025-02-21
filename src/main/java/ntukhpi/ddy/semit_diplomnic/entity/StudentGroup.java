@@ -12,12 +12,14 @@ import java.util.List;
 
 @NoArgsConstructor
 @Entity
-@Table(name = "studentGroup")
+@Table(name = "student_group")
 public class StudentGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false, length = 10)
+    String code;
+    @Column(nullable = false, length = 50)
     String groupName;
     @Enumerated(EnumType.STRING)
     @Column(name = "groupType", nullable = false)
@@ -26,15 +28,46 @@ public class StudentGroup {
     @ManyToOne
     @JoinColumn(name = "supervisor_id")
     private Supervisor supervisor;
-    @OneToMany(mappedBy = "group", fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinTable(
+            name = "students_in_groups",
+            joinColumns = @JoinColumn(name = "group_id"),
+            inverseJoinColumns = @JoinColumn(name = "student_id")
+    )
     private List<Student> students = new ArrayList<>();
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "task_student_group",
+            joinColumns = @JoinColumn(name = "group_id"),
+            inverseJoinColumns = @JoinColumn(name = "task_id")
+    )
+    private List<Task> tasks = new ArrayList<>();
+
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
+    }
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
     public StudentGroup(){
 
     }
-    public StudentGroup(String groupName, groupType groupType, Supervisor supervisor) {
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public StudentGroup(String groupName, groupType groupType, Supervisor supervisor, String code) {
         this.groupName = groupName;
         this.groupType = groupType;
         this.supervisor = supervisor;
+        this.code = code;
     }
     public Long getId() {
         return id;

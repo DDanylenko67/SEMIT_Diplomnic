@@ -1,0 +1,139 @@
+.body{
+    font-family: Roboto, sans-serif;
+    background-color: #9F1C21;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.middle-container{
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.right-container{
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.card-container{
+    max-width: 1000px;
+    background-color: white;
+    margin: auto;
+    margin-top: 40px;
+    border-radius: 8px;
+    border: 2px solid #9F1C21;
+}
+.card{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    justify-items: flex-start;
+}
+.card-left-container{
+    min-width: 0;
+    width: 58%;
+}
+.bottom{
+    margin: 20px;
+}
+.top{
+    margin: 20px;
+    margin-bottom: 2rem;
+}
+.card-right-container{
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+    min-width: 0;
+    margin-left: 10px;
+    width: 38%;
+    border-radius: 8px;
+    border: 2px solid #9F1C21;
+}
+.card-label{
+    margin-top: 20px;
+    display: block;
+    width: 100%;
+}
+.input-field{
+    resize: none;
+    width: 100%;
+    padding: 8px;
+    border: 2px solid #9F1C21;
+    border-radius: 10px;
+}
+.input-bottom{
+    height: 300px;
+}
+.card-label a{
+    margin-left: 30px;
+    font-size: 18px;
+    font-weight: 700;
+}
+.date-button{
+    margin: 10px 0px 20px 20px;
+    border-radius: 10px;
+    width: 90%;
+    border: 2px solid #9F1C21;
+}
+.radio-button{
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    outline: none;
+    cursor: pointer;
+    border: 2px solid #9F1C21;
+}
+input[type="radio"]:checked{
+    background-color: #9F1C21;
+}
+.hidden { display: none; }
+.home{
+    text-decoration: none;
+    width: 150px;
+    height: 3rem;
+    border: 2px solid #9F1C21;
+    color: #9F1C21;
+    background-color: white;
+    margin-top: 3rem;
+    margin-right: 1.5rem;
+    border-radius: 10px;
+}
+.submit-button{
+    width: 150px;
+    height: 3rem;
+    border: 0;
+    color: white;
+    background-color: #9F1C21;
+    margin-top: 3rem;
+    border-radius: 10px;
+}
+.center{
+    display: flex;
+    justify-content: center;
+    justify-items: center;
+    margin-bottom: 40px;
+}
+.radio-group{
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    margin-left: 20px;
+}
+.checkboxes {
+    border: #9F1C21;
+    font-weight: 700;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.delete{
+    margin-top: auto;
+    display: flex;
+    justify-content: center;
+    justify-items: center;
+    margin-bottom: 2rem;
+}
