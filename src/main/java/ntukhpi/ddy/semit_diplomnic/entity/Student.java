@@ -27,6 +27,16 @@ public class Student {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<TaskAssignment> assignments = new ArrayList<>();
 
+    public Student() {
+    }
+
+    public Student(String name, String email, String universityGroup, List<StudentGroup> groups) {
+        this.name = name;
+        this.email = email;
+        this.universityGroup = universityGroup;
+        this.groups = groups;
+    }
+
     public void setGroups(List<StudentGroup> groups) {
         this.groups = groups;
     }

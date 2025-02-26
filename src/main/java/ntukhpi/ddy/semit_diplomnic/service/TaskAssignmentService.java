@@ -1,5 +1,6 @@
 package ntukhpi.ddy.semit_diplomnic.service;
 
+import ntukhpi.ddy.semit_diplomnic.entity.Student;
 import ntukhpi.ddy.semit_diplomnic.entity.Task;
 import ntukhpi.ddy.semit_diplomnic.entity.TaskAssignment;
 
@@ -12,4 +13,6 @@ public interface TaskAssignmentService {
     TaskAssignment updateTaskAssignment(Long id, TaskAssignment task);
     void deleteTaskAssignmentById(Long id);
     public TaskAssignment mergeTaskAssignment(TaskAssignment taskAssignment);
+    List<TaskAssignment> getTaskAssignmentByStudentAndTask(Student student, Task task);
+    void deleteTaskAssignmentByStudentAndTask(Student student, Task task);
 }

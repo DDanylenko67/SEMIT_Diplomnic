@@ -17,7 +17,8 @@
         </a>
     </div>
 </nav>
-<form th:action="@{/updateTask}" th:object="${task}" method="POST">
+<form th:action="@{/updateSavedTask/{id} (id=${task.id})}" th:object="${task}" method="POST">
+    <input type="hidden" th:value="${groupId}" id="groups_id" name="group_id">
     <div class="card-container">
         <div class="card">
             <div class="card-left-container">
@@ -75,15 +76,21 @@
                         </div>
                     </div>
                 </div>
-                <form th:action="@{/deleteTask/{id} (id=${task.id})}" class="delete">
+                <form id="deleteForm" th:action="@{/deleteTask/{id} (id=${task.id})}" class="delete" method="get">
                     <input type="hidden" th:value="${groupId}" id="group_id" name="group_id">
-                    <button type="submit" class="submit-button" style="padding: 0.2rem">Видалити завдання</button>
+                    <button class="submit-button" type="button" onclick="confirmSubmit()">Видалити завдання</button>
                 </form>
             </div>
         </div>
     </div>
 </form>
-
+<script>
+    function confirmSubmit() {
+        if (confirm("Ви впевненні, що хочете видалити завдання?")) {
+            document.getElementById("deleteForm").submit();
+        }
+    }
+</script>
 <nav class="" style="background-color: white">
     <div class="line-container">
         <div class="custom-line"></div>

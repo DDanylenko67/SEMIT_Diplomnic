@@ -17,7 +17,7 @@ public class Theme {
     private Long id;
     @Column(nullable = false, length = 250)
     private String themeNameUA;
-    @Column(nullable = false, length = 250)
+    @Column(length = 250)
     private String themeNameENG;
     @Column
     private String comment;
@@ -35,7 +35,13 @@ public class Theme {
     public Theme(){
 
     }
-
+    public Theme(String themeNameUA,  ntukhpi.ddy.semit_diplomnic.enums.status.status status, Supervisor supervisor, Student student) {
+        this.themeNameUA = themeNameUA;
+        this.themeNameENG = themeNameENG;
+        this.status = status;
+        this.supervisor = supervisor;
+        this.student = student;
+    }
     public Theme(String themeNameUA, String themeNameENG,  ntukhpi.ddy.semit_diplomnic.enums.status.status status, Supervisor supervisor, Student student) {
         this.themeNameUA = themeNameUA;
         this.themeNameENG = themeNameENG;

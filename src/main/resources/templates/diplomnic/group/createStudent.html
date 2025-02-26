@@ -6,7 +6,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="/css/footer.css">
     <link rel="stylesheet" type="text/css" href="/css/group.css">
-    <title>Редагування групи</title>
+    <title>Створення нової групи</title>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg nav-dark" style="background-color: #9F1C21;">
@@ -21,30 +21,69 @@
         <div class="form-card">
             <div class="form-container">
                 <div class="form-header">
-                    <h5>Редагування групи</h5>
+                    <h5>Створення нової групи</h5>
                 </div>
                 <div class="form-body">
-                    <form th:action="@{/diplomnic/updateGroup}" enctype="multipart/form-data"  th:object="${group}" method="post">
+                    <form th:action="@{/diplomnic/saveStudent}" enctype="multipart/form-data"  th:object="${student}" method="post">
+                        <input type="hidden" th:value="${student.getGroup().get(0).getId()}" id="group_id" name="group_id">
                         <div class="form-group mb-3">
-                            <label class="control-label"> Назва групи</label>
+                            <label class="control-label"> Ім'я</label>
                             <input
                                     type="text"
                                     id="groupName"
                                     name="groupName"
-                                    th:field="*{groupName}"
+                                    th:field="*{name}"
                                     class="form-control"
-                                    placeholder="Уведіть назву групи"
-                                    maxlength="50"
+                                    placeholder="Уведіть ім'я"
+                                    maxlength="100"
                                     required
                             />
                         </div>
 
                         <div class="form-group mb-3">
-                            <input type="hidden" name="id" th:value="${group.getId()}"/>
-                            <label class="control-label"> Тип групи</label>
-                            <input type="radio" id="bachelor" value="bachelor" th:field="*{groupType}" required class="radio-button"> Бакалаври
-                            <input type="radio" id="master" value="master" th:field="*{groupType}" required class="radio-button"> Магістри
+                            <label class="control-label"> Група в університеті</label>
+                            <input
+                                    type="text"
+                                    id="universityGroup"
+                                    name="universityGroupe"
+                                    th:field="*{universityGroup}"
+                                    class="form-control"
+                                    placeholder="Уведіть назву групи"
+                                    maxlength="10"
+                                    required
+                            />
                         </div>
+
+                        <div class="form-group mb-3">
+                            <label class="control-label"> Група </label>
+                            <input
+                                    type="text"
+                                    th:value="*{group.get(0).getGroupName()}"
+                                    class="form-control"
+                                    readonly
+                            />
+                        </div>
+
+
+                        <div class="form-group mb-3">
+                            <label class="control-label"> Електрона пошта</label>
+                            <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    th:field="*{email}"
+                                    class="form-control"
+                                    placeholder="Уведіть пошту"
+                                    maxlength="100"
+                                    required
+                            />
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="control-label"> Тема дипломної роботи</label>
+                            <textarea id="details" class="input-field input-bottom" th:field="${themeUA}" spellcheck="false"></textarea>
+                        </div>
+
                         <div>
                             <button type="button" onclick="window.location.href='/diplomnic'" class="home">На головну</button>
                             <button type="submit" class="submit-button">Прийняти</button>
@@ -54,7 +93,7 @@
                 </div>
             </div>
             <div class="image-container">
-                <img src="/images/background_1.jpg" alt="">
+                <img src="/images/background_6.jpg" alt="">
             </div>
         </div>
     </div>

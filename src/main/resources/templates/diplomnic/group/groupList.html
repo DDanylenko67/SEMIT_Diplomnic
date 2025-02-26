@@ -47,14 +47,20 @@
                         </div>
                         <div class="end-task">
                             <form th:action="@{/deleteStudent/{id} (id=${student.id})}" class="update" >
+                                <input type="hidden" th:value="${group.id}" id="group_id" name="group_id">
                                 <button class="submit-button">Видалити з групи</button>
                             </form>
                         </div>
                     </div>
                 </div>
                 <div class="center">
-                    <button type="button" onclick="window.location.href='/diplomnic'" class="submit-button">Додати студента</button>
-                    <button type="submit" class="submit-button">Додати студентів з Excel файлу</button>
+                    <form th:action="@{/diplomnic/addStudent/{group_id} (group_id=${group.getId()})}" >
+                        <button class="import-button">Додати студента</button>
+                    </form>
+                    <form th:action="@{/diplomnic/saveStudents/{id} (id=${group.id})}" enctype="multipart/form-data" method="post">
+                        <input type="file" name="file" id="file" class="file-input">
+                        <button type="submit" class="import-button ">Додати студентів з Excel файлу</button>
+                    </form>
                 </div>
             </div>
         </div>

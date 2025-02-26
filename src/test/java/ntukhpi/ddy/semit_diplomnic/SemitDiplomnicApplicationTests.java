@@ -170,6 +170,28 @@ class SemitDiplomnicApplicationTests {
 		taskService.updateTask(task.getId(), task);
 		taskService.deleteTaskById(task.getId());
 	}
+
+	@Transactional
+	@Test
+	void deleteGroupFromTask(){
+		Task task = taskService.getTaskById(5L);
+		StudentGroup studentGroup = studentGroupService.getStudentGroupById(1L);
+		List<Student> students = studentGroup.getStudents();
+
+		for(Student student : students){
+			for(TaskAssignment taskAssignment : student.getAssignments()){
+				if(taskAssignment.getTask().getId().equals(task.getId())){
+					taskAssignmentService.deleteTaskAssignmentById(taskAssignment.getId());
+					task.getAssignments().remove(taskAssignment);
+				}
+			}
+		}
+
+		studentGroup.getTasks().remove(task);
+		task.getStudentGroups().remove(studentGroup);
+		studentGroupService.updateStudentGroup(studentGroup.getId(), studentGroup);
+		taskService.updateTask(task.getId(), task);
+	}
 	@Test
 	void addTheme(){
 		Student student = studentService.getStudentById(1L);

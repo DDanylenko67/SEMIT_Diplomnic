@@ -1,5 +1,7 @@
 package ntukhpi.ddy.semit_diplomnic.controllers;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import ntukhpi.ddy.semit_diplomnic.entity.*;
 import ntukhpi.ddy.semit_diplomnic.enums.groupType.groupType;
 import ntukhpi.ddy.semit_diplomnic.enums.status.status;
@@ -22,6 +24,8 @@ import java.util.List;
 
 @Controller
 public class TaskController {
+    @PersistenceContext
+    private EntityManager entityManager;
     private final TaskService taskService;
     private final UserService userService;
     private final StudentService studentService;
@@ -31,6 +35,7 @@ public class TaskController {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     String minDate = LocalDate.now().plusDays(1).format(formatter);
     String maxDate = LocalDate.now().plusYears(1).format(formatter);
+
 
     public TaskController(final TaskService taskService, final StudentService studentService,
                           SupervisorService supervisorService, StudentGroupService studentGroupService,
@@ -82,13 +87,6 @@ public class TaskController {
         }
         return "redirect:/diplomnic";
     }
-
-    @GetMapping()
-    public String SaveUpdatedTask(Model model){
-        return "/diplomnic/diplomnic";
-    }
-
-
     @GetMapping("/deleteTask/{id}")
     public String deleteTask(@PathVariable Long id, @RequestParam("group_id") Long groupId, Model model){
         Task task = taskService.getTaskById(id);
@@ -100,16 +98,65 @@ public class TaskController {
         taskService.deleteTaskById(task.getId());
         return  "redirect:/groupTasks/" + groupId;
     }
-    @GetMapping("/finallyDeleteTasks/{taskId}/{groupId}")
-    public String deleteTask(@PathVariable Long taskId, @PathVariable Long groupId){
-        taskService.deleteTaskById(taskId);
+    @PostMapping("/updateSavedTask/{id}")
+    public String updateSavedTask(@PathVariable Long id,
+                             @ModelAttribute("task") Task taskToSave,
+                             @RequestParam(required = false) List<Long> selectedBachelors,
+                             @RequestParam(required = false) List<Long> selectedMasters,
+                             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDate date, @RequestParam("group_id") Long groupId, Model model){
+        Task taskDB = taskService.getTaskById(id);
+        taskDB.setDateOfUpdate(LocalDate.now());
+        taskDB.setDeadline(date);
+        taskDB.setDescription(taskToSave.getDescription());
+        taskDB.setTitle(taskToSave.getTitle());
+        List<StudentGroup> groups = new ArrayList<>();
+        if (selectedBachelors != null) {
+            for (Long selectedGroup : selectedBachelors) {
+                groups.add(studentGroupService.getStudentGroupById(selectedGroup));
+            }
+        }
+        if(selectedMasters != null){
+            for (Long selectedGroup : selectedMasters) {
+                groups.add(studentGroupService.getStudentGroupById(selectedGroup));
+            }
+        }
+        if(!taskDB.getStudentGroups().equals(groups)){
+            for (StudentGroup group : taskDB.getStudentGroups()) {
+                if(!groups.contains(group)){
+                    deleteAssignments(taskDB, group);
+                    deleteStudentGroup(taskDB, group);
+                }
+            }
+            for (StudentGroup group : groups) {
+                if(!taskDB.getStudentGroups().contains(group)){
+                    addAssignments(group, taskDB);
+                }
+            }
+        }
         return  "redirect:/groupTasks/" + groupId;
     }
-    public void deleteGroups(Task task){
-        List<StudentGroup> groupsCopy = new ArrayList<>(task.getStudentGroups());
-        for (StudentGroup gr : groupsCopy) {
-            gr.getTasks().remove(task);
-            studentGroupService.updateStudentGroup(gr.getId(), gr);
+
+    public void deleteStudentGroup(Task task, StudentGroup studentGroup){
+        task.getStudentGroups().remove(studentGroup);
+        studentGroup.getTasks().remove(task);
+        taskService.updateTask(task.getId(), task);
+        studentGroupService.updateStudentGroup(studentGroup.getId(), studentGroup);
+    }
+
+    public void deleteAssignments(Task task, StudentGroup studentGroup) {
+        if (!studentGroup.getStudents().isEmpty()) {
+            for (Student student : studentGroup.getStudents()) {
+                Iterator<TaskAssignment> iterator = student.getAssignments().iterator();
+                while (iterator.hasNext()) {
+                    TaskAssignment taskAssignment = iterator.next();
+                    if (taskAssignment.getTask().getId().equals(task.getId())) {
+                        iterator.remove();
+                        taskAssignmentService.deleteTaskAssignmentById(taskAssignment.getId());
+                        task.getAssignments().remove(taskAssignment);
+                        taskService.updateTask(task.getId(), task);
+                    }
+                }
+            }
         }
     }
     public void deleteAssignments(Task task){
@@ -117,6 +164,13 @@ public class TaskController {
         for (TaskAssignment assignment : assignments) {
             TaskAssignment managedAssignment = taskAssignmentService.getTaskAssignmentById(assignment.getId());
             taskAssignmentService.deleteTaskAssignmentById(managedAssignment.getId());
+        }
+    }
+    public void deleteGroups(Task task){
+        List<StudentGroup> groupsCopy = new ArrayList<>(task.getStudentGroups());
+        for (StudentGroup gr : groupsCopy) {
+            gr.getTasks().remove(task);
+            studentGroupService.updateStudentGroup(gr.getId(), gr);
         }
     }
 
