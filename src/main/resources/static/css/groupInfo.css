@@ -76,3 +76,22 @@
     color: white;
     border-radius: 10px;
 }
+.end-task p.status-font{
+    color: black;
+    font-weight: 700;
+    font-size: 20px;
+}
+.done-class {
+    background: linear-gradient(to right,lightgreen , green);;
+    font-weight: bold;
+}
+
+.in-progress-class {
+    background: linear-gradient(to right,navajowhite , yellow);
+    font-weight: bold;
+}
+
+.pass-class {
+    background: linear-gradient(to right, lightcoral , red);;
+    font-weight: bold;
+}

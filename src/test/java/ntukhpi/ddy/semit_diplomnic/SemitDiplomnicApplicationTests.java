@@ -42,9 +42,9 @@ class SemitDiplomnicApplicationTests {
 	}
 	@Test
 	void addStudentGroup() {
-		StudentGroup studentGroup = new StudentGroup("Бакалаври 2025", groupType.bachelor, supervisorService.getSupervisorById(1L), "1L4gl2qW");
+		StudentGroup studentGroup = new StudentGroup("Бакалаври 2025", groupType.bachelor, supervisorService.getSupervisorById(1L), "1L4gl2qWOs");
 		studentGroupService.saveStudentGroup(studentGroup);
-		StudentGroup studentGroup1 = new StudentGroup("Магістри-2025-2026", groupType.master, supervisorService.getSupervisorById(1L), "8aiml7nH");
+		StudentGroup studentGroup1 = new StudentGroup("Магістри-2025-2026", groupType.master, supervisorService.getSupervisorById(1L), "8aiml7nH7s");
 		studentGroupService.saveStudentGroup(studentGroup1);
 	}
 
@@ -126,9 +126,10 @@ class SemitDiplomnicApplicationTests {
 	@Test
 	void addTaskAssigment(){
 		Student student = studentService.getStudentById(1L);
+		StudentGroup studentGroup = studentGroupService.getStudentGroupById(1L);
 		Task task = taskService.getTaskById(1L);
 		System.out.println(task.getTitle());
-		TaskAssignment taskAssignment = new TaskAssignment(task, student, status.inProgress);
+		TaskAssignment taskAssignment = new TaskAssignment(task, student, studentGroup,status.inProgress);
 		taskAssignmentService.saveTaskAssignment(taskAssignment);
 		student.getAssignments().add(taskAssignment);
 		task.getAssignments().add(taskAssignment);
@@ -153,7 +154,7 @@ class SemitDiplomnicApplicationTests {
 
 	@Test
 	void deleteTask(){
-		Task task = taskService.getTaskById(17L);
+		Task task = taskService.getTaskById(1L);
 		for(TaskAssignment taskAssignment : task.getAssignments()){
 			if(taskAssignment != null){
 				taskAssignmentService.deleteTaskAssignmentById(taskAssignment.getId());

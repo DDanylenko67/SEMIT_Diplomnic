@@ -116,4 +116,15 @@ public class Student {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public List<TaskAssignment> getAssignmentByGroup(Long id){
+        List<TaskAssignment> taskAssignments = new ArrayList<>();
+        for(TaskAssignment taskAssignment : assignments){
+            if(taskAssignment.getStudentGroup().getId().equals(id)){
+                System.out.println(taskAssignment.getId());
+                taskAssignments.add(taskAssignment);
+            }
+        }
+        return taskAssignments;
+    }
 }

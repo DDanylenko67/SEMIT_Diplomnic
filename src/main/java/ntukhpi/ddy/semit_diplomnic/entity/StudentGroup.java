@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ntukhpi.ddy.semit_diplomnic.enums.groupType.groupType;
 import ntukhpi.ddy.semit_diplomnic.enums.groupType.groupTypeConverter;
+import ntukhpi.ddy.semit_diplomnic.enums.status.status;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,5 +109,17 @@ public class StudentGroup {
 
     public void setStudents(List<Student> students) {
         this.students = students;
+    }
+
+    public int getStatusByStudent(Long id) {
+        int size = 0;
+        for(Task task : tasks){
+            for(TaskAssignment assignment : task.getAssignments()){
+                if(assignment.getStudent().getId() == id && assignment.getStudentGroup().getId().equals(this.id) && assignment.getStatus().equals(status.done)){
+                    size++;
+                }
+            }
+        }
+        return size;
     }
 }

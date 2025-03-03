@@ -197,7 +197,7 @@ public class TaskController {
     public void addAssignments(StudentGroup studentGroup, Task task) {
         List<Student> students = new ArrayList<>(studentGroup.getStudents());
         for (Student student : students) {
-            TaskAssignment taskAssignment = new TaskAssignment(task, student, status.inProgress);
+            TaskAssignment taskAssignment = new TaskAssignment(task, student, studentGroup,status.inProgress);
             taskAssignmentService.saveTaskAssignment(taskAssignment);
 
             task.getAssignments().add(taskAssignment);

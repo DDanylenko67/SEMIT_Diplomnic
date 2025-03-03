@@ -131,7 +131,7 @@ public class groupController {
 
         List<Task> tasks = studentGroup.getTasks();
         for(Task task : tasks) {
-            TaskAssignment taskAssignment = new TaskAssignment(task, studentFromDB, status.inProgress);
+            TaskAssignment taskAssignment = new TaskAssignment(task, studentFromDB, studentGroup,status.inProgress);
             taskAssignmentService.saveTaskAssignment(taskAssignment);
             List<TaskAssignment> taskAssignmentsFromDB = taskAssignmentService.getTaskAssignmentByStudentAndTask(studentFromDB, task);
             task.getAssignments().addAll(taskAssignmentsFromDB);
@@ -206,25 +206,39 @@ public class groupController {
         return "redirect:/groupList/" + groupId;
     }
 
+    @GetMapping("/studentAssigments/{id}")
+    public String studentAssignment(Model model, @PathVariable Long id, @RequestParam("group_id") Long groupId){
+        StudentGroup studentGroup = studentGroupService.getStudentGroupById(groupId);
+        Student student = studentService.getStudentById(id);
+        for(TaskAssignment taskAssignment : student.getAssignmentByGroup(groupId)){
+            System.out.println(taskAssignment.getTask().getTitle());
+        }
+        model.addAttribute("group", studentGroup);
+        model.addAttribute("student", student);
+        return "/diplomnic/group/assignment";
+    }
+
+
+
 
     private void updateGroupByExcel(MultipartFile file, Supervisor supervisor, StudentGroup studentGroup1){
         try (InputStream inputStream = file.getInputStream();
              Workbook workbook = new XSSFWorkbook(inputStream)) {
             Sheet sheet = workbook.getSheetAt(0);
             StudentGroup studentGroup = studentGroupService.getStudentGroupByName(studentGroup1.getGroupName());
-            List<Student> temp = readCells(sheet, studentGroup, supervisor);
-            List<Student> students = studentGroupService.getStudentsByStudentGroupName(studentGroup1.getGroupName());
-            students.addAll(temp);
-            studentGroup.setStudents(students);
+            List<Student> students = readCells(sheet, studentGroup, supervisor);
             for(Task task: studentGroup.getTasks()){
-                for(Student student : studentGroup.getStudents()){
-                    TaskAssignment taskAssignment = new TaskAssignment(task, student, status.inProgress);
+                for(Student student : students){
+                    TaskAssignment taskAssignment = new TaskAssignment(task, student, studentGroup,status.inProgress);
                     taskAssignmentService.saveTaskAssignment(taskAssignment);
                     List<TaskAssignment> taskAssignmentsFromDB = taskAssignmentService.getTaskAssignmentByStudentAndTask(studentService.getStudentByEmail(student.getEmail()), task);
                     task.getAssignments().addAll(taskAssignmentsFromDB);
                     student.getAssignments().addAll(taskAssignmentsFromDB);
                 }
             }
+            List<Student> temp = studentGroupService.getStudentsByStudentGroupName(studentGroup1.getGroupName());
+            temp.addAll(students);
+            studentGroup.setStudents(temp);
             studentGroupService.updateStudentGroup(studentGroup.getId(), studentGroup);
         } catch (IOException e) {
             System.out.println("Помилка під час читання файлу");

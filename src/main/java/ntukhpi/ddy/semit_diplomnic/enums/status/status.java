@@ -3,6 +3,7 @@ package ntukhpi.ddy.semit_diplomnic.enums.status;
 
 public enum status {
     suggested("запропоноване"),
+    pass("пропущений строк здачі"),
     done("зроблено"),
     inProgress("виконується"),
     checking("перевіряється"),

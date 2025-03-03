@@ -22,16 +22,20 @@ public class TaskAssignment {
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
+    @ManyToOne
+    @JoinColumn(name = "studentGroup_id", nullable = false)
+    private StudentGroup studentGroup;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "taskStatus")
     @Convert(converter = statusConverter.class)
     private status Status;
     public TaskAssignment() {
     }
-
-    public TaskAssignment(Task task, Student student, status Status) {
+    public TaskAssignment(Task task, Student student, StudentGroup studentGroup,status Status) {
         this.task = task;
         this.student = student;
+        this.studentGroup = studentGroup;;
         this.Status = Status;
     }
     public void setId(Long id) {
@@ -42,6 +46,13 @@ public class TaskAssignment {
         this.task = task;
     }
 
+    public StudentGroup getStudentGroup() {
+        return studentGroup;
+    }
+
+    public void setStudentGroup(StudentGroup studentGroup) {
+        this.studentGroup = studentGroup;
+    }
 
     public void setStudent(Student student) {
         this.student = student;
