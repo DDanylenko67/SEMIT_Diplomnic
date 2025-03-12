@@ -3,20 +3,23 @@ package ntukhpi.ddy.semit_diplomnic.controllers;
 import ntukhpi.ddy.semit_diplomnic.entity.*;
 import ntukhpi.ddy.semit_diplomnic.enums.status.status;
 import ntukhpi.ddy.semit_diplomnic.repository.UserRepository;
-import ntukhpi.ddy.semit_diplomnic.service.StudentGroupService;
-import ntukhpi.ddy.semit_diplomnic.service.SupervisorService;
-import ntukhpi.ddy.semit_diplomnic.service.TaskAssignmentService;
-import ntukhpi.ddy.semit_diplomnic.service.UserService;
+import ntukhpi.ddy.semit_diplomnic.service.*;
 import org.hibernate.sql.ast.tree.update.Assignment;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDate;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 @Controller
 public class DiplomnicController {
@@ -25,11 +28,14 @@ public class DiplomnicController {
     private final StudentGroupService studentGroupService;
     private final SupervisorService supervisorService;
     private final TaskAssignmentService taskAssignmentService;
-    public DiplomnicController(UserService userService, StudentGroupService studentGroupService, SupervisorService supervisorService, TaskAssignmentService taskAssignmentService) {
+    private final StudentService studentService;
+    public DiplomnicController(UserService userService, StudentGroupService studentGroupService, StudentService studentService,
+                               SupervisorService supervisorService, TaskAssignmentService taskAssignmentService) {
         this.userService = userService;
         this.studentGroupService = studentGroupService;
         this.supervisorService = supervisorService;
         this.taskAssignmentService = taskAssignmentService;
+        this.studentService = studentService;
     }
     @GetMapping("/diplomnic")
     public String diplomnic(Model model) {
@@ -39,8 +45,52 @@ public class DiplomnicController {
             List<StudentGroup> groups = studentGroupService.getStudentsGroupBySupervisor(supervisor);
             model.addAttribute("groups", groups);
         }
+        else {
+            Student student = studentService.getStudentByEmail(user.getLogin());
+            List<TaskAssignment> task = student.getAssignments();
+            String type = "all";
+            model.addAttribute("type", type);
+            model.addAttribute("task", task);
+        }
         return "/diplomnic/diplomnic";
     }
+    @GetMapping("/diplomnic/done")
+    public String diplomnicDone(Model model) {
+        Student student = studentService.getStudentByEmail(getCurrentUser().getLogin());
+        List<TaskAssignment> taskToFind = student.getAssignments();
+        String type = "done";
+        model.addAttribute("type", type);
+        model.addAttribute("task", findTaskByStatus(taskToFind, status.done));
+        return "/diplomnic/diplomnic";
+    }
+    @GetMapping("/diplomnic/pass")
+    public String diplomnicPass(Model model) {
+        Student student = studentService.getStudentByEmail(getCurrentUser().getLogin());
+        List<TaskAssignment> taskToFind = student.getAssignments();
+        String type = "pass";
+        model.addAttribute("type", type);
+        model.addAttribute("task", findTaskByStatus(taskToFind, status.pass));
+        return "/diplomnic/diplomnic";
+    }
+    @GetMapping("/diplomnic/inProgress")
+    public String diplomnicInProgress(Model model) {
+        Student student = studentService.getStudentByEmail(getCurrentUser().getLogin());
+        List<TaskAssignment> taskToFind = student.getAssignments();
+        String type = "inProgress";
+        model.addAttribute("type", type);
+        model.addAttribute("task", findTaskByStatus(taskToFind, status.inProgress));
+        return "/diplomnic/diplomnic";
+    }
+    public List<TaskAssignment> findTaskByStatus(List<TaskAssignment> tasks, status status){
+        List<TaskAssignment> task = new ArrayList<>();
+        for(TaskAssignment assignment : tasks) {
+            if(assignment.getStatus().equals(status)){
+                task.add(assignment);
+            }
+        }
+        return task;
+    }
+
     @GetMapping("/checkTask")
     public String checkTask(Model model) {
         Supervisor supervisor = supervisorService.findSupervisorByEmail(getCurrentUser().getLogin());
@@ -55,6 +105,53 @@ public class DiplomnicController {
         return "/diplomnic/checkTask";
     }
 
+    @GetMapping("/diplomnic/calendar")
+    public String calendar(Model model){
+        Student student = studentService.getStudentByEmail(getCurrentUser().getLogin());
+        LocalDate date = LocalDate.now();
+        addTasks(student.getAssignments(), date, model);
+        addDays(date, model);
+        model.addAttribute("date", date);
+        model.addAttribute("month", getMonthName(date));
+        return "/diplomnic/calendar";
+    }
+    @GetMapping("/diplomnic/calendar/update")
+    public String previousMonth(@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date, Model model) {
+        Student student = studentService.getStudentByEmail(getCurrentUser().getLogin());
+        addDays(date, model);
+        addTasks(student.getAssignments(), date, model);
+        model.addAttribute("date", date);
+        model.addAttribute("month", getMonthName(date));
+        return "/diplomnic/calendar";
+    }
+
+    public void addTasks(List<TaskAssignment> taskAssignments, LocalDate date, Model model) {
+        List<TaskAssignment> assignmentList = new ArrayList<>();
+        for(TaskAssignment assignment : taskAssignments) {
+            if(assignment.getTask().getDeadline().getMonth().equals(date.getMonth()) && assignment.getTask().getDeadline().getYear() == date.getYear()) {
+                assignmentList.add(assignment);
+            }
+        }
+        model.addAttribute("assignments", assignmentList);
+    }
+    public void addDays(LocalDate date, Model model) {
+        LocalDate firstDayOfMonth = date.withDayOfMonth(1);
+        int daysInMonth = date.getMonth().length(date.isLeapYear());
+        int firstDayOfWeek = firstDayOfMonth.getDayOfWeek().getValue();
+        List<Integer> calendarDays = new ArrayList<>();
+        for (int i = 1; i < firstDayOfWeek; i++) {
+            calendarDays.add(0);
+        }
+        for (int i = 1; i <= daysInMonth; i++) {
+            calendarDays.add(i);
+        }
+        model.addAttribute("calendarDays", calendarDays);
+    }
+
+    public String getMonthName(LocalDate date){
+        String[] monthNames = {  "Грудень","Січень", "Лютий", "Березень", "Квітень", "Травень", "Червень", "Липень", "Серпень", "Вересень", "Жовтень", "Листопад", "Грудень"};
+        return monthNames[date.getMonth().getValue()];
+    }
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.isAuthenticated()) {

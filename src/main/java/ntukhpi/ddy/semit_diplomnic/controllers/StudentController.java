@@ -82,6 +82,9 @@ public class StudentController {
             }
             themeService.saveTheme(theme);
         }
+        if(status != null && themeUA.isEmpty()){
+            return "redirect:/diplomnic";
+        }
         else {
             if(!themeENG.equals(student.getTheme().getThemeNameENG())){
                 Theme theme = themeService.getThemeByStudent(student);

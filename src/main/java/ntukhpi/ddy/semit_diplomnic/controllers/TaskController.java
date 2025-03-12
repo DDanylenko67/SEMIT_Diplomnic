@@ -120,6 +120,9 @@ public class TaskController {
                 groups.add(studentGroupService.getStudentGroupById(selectedGroup));
             }
         }
+        if(groups.isEmpty()){
+            return "redirect:/deleteTask/"+taskDB.getId();
+        }
         if(!taskDB.getStudentGroups().equals(groups)){
             for (StudentGroup group : taskDB.getStudentGroups()) {
                 if(!groups.contains(group)){

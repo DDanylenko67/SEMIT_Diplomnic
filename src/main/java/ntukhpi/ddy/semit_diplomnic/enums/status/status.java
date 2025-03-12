@@ -7,7 +7,7 @@ public enum status {
     done("зроблено"),
     inProgress("виконується"),
     checking("перевіряється"),
-    rejected("відхілено");
+    rejected("відхилено");
 
     private final String displayName;
 

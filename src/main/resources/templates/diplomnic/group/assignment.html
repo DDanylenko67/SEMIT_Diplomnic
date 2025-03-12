@@ -32,16 +32,20 @@
     <div class="diplomnik-card">
       <div th:object="${group}" class="group-block">
         <div class="head">
-          <p th:text="${student.getName() + ' | Прогрес виконання завдань'}" class="left"></p>
+          <p th:text="${student.getName() + '   | Прогрес виконання завдань'}" class="left"></p>
           <form th:action="@{/groupInfo/{id} (id=${group.id})}" class="update" >
             <button class="non-button">Назад</button>
           </form>
         </div>
         </div>
         <div th:each="assignment : ${student.getAssignmentByGroup(group.id)}">
-          <div class="tasks-block"    th:classappend="${assignment.getStatus().getDisplayName() == 'зроблено' ? 'done-class'
-                        : (assignment.getStatus().getDisplayName() == 'виконується' ? 'in-progress-class'
-                        : 'pass-class')}">
+          <div class="tasks-block"
+               th:classappend="${
+                  assignment.getStatus().getDisplayName() == 'зроблено' ? 'done-class' :
+                  assignment.getStatus().getDisplayName() == 'виконується' ? 'in-progress-class' :
+                  assignment.getStatus().getDisplayName() == 'перевіряється' ? 'in-progress-class' :
+                  'pass-class'
+           }">
             <div class="task-title">
               <p th:text="${assignment.getTask().getTitle()}"></p>
             </div>
@@ -58,7 +62,6 @@
         </div>
       </div>
     </div>
-  </div>
 
 </main>
 <footer class="" style="background-color: white">

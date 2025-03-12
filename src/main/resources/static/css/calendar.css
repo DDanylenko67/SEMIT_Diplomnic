@@ -1,0 +1,72 @@
+.date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.year {
+    font-size: 20px;
+}
+.carousel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9F1C21;
+    font-size: 24px;
+    padding: 20px;
+    position: relative;
+    width: 100%;
+}
+.arrow {
+    text-decoration: none;
+    color: white;
+    font-size: 30px;
+    padding: 10px;
+}
+
+.arrow.left {
+    color: #9F1C21;
+    position: absolute;
+    left: 20px;
+}
+
+.arrow.right {
+    color: #9F1C21;
+    position: absolute;
+    right: 20px;
+}
+
+.arrow:hover {
+    color: #ddd;
+}
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    padding-bottom: 3rem;
+}
+.day{
+    border: 2px solid #9F1C21;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+}
+.task{
+    border: 2px solid #9F1C21;
+    padding: 20px;
+    display: flex;
+    background-color: #9F1C21;
+    align-items: center;
+    justify-content: center;
+    color: white;;
+}
+.task a{
+    text-decoration: none;
+    color: white;
+}
+.header{
+    border: 0px ;
+}

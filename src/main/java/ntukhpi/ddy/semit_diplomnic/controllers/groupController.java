@@ -116,19 +116,31 @@ public class groupController {
         StudentGroup studentGroup = studentGroupService.getStudentGroupById(groupId);
         List<StudentGroup> studentGroups = new ArrayList<>();
         studentGroups.add(studentGroup);
-        UserDto studentToSave = new UserDto(student.getName(), student.getEmail(),
-                student.getUniversityGroup(), studentGroups, "password");
-        userService.saveUserStudent(studentToSave);
-        Student studentFromDB = studentService.getStudentByEmail(student.getEmail());
-        studentGroup.getStudents().add(studentFromDB);
-        student.getGroups().add(studentGroup);
-        studentGroupService.updateStudentGroup(studentGroup.getId(), studentGroup);
-        if(themeUA != null) {
-            Theme theme = new Theme(themeUA, status.checking, supervisor, studentFromDB);
-            themeService.saveTheme(theme);
+        if(studentService.getStudentByEmail(student.getEmail()) == null) {
+            UserDto studentToSave = new UserDto(student.getName(), student.getEmail(),
+                    student.getUniversityGroup(), studentGroups, "password");
+            userService.saveUserStudent(studentToSave);
+            Student studentFromDB = studentService.getStudentByEmail(student.getEmail());
+            studentGroup.getStudents().add(studentFromDB);
+            studentFromDB.getGroups().add(studentGroup);
+            studentGroupService.updateStudentGroup(studentGroup.getId(), studentGroup);
+            if(themeUA != null) {
+                Theme theme = new Theme(themeUA, status.checking, supervisor, studentFromDB);
+                themeService.saveTheme(theme);
+            }
+            addTask(studentGroup, studentFromDB);
         }
+        if(!studentGroup.getStudents().contains(studentService.getStudentByEmail(student.getEmail()))) {
+            Student studentFromDB = studentService.getStudentByEmail(student.getEmail());
+            studentGroup.getStudents().add(studentFromDB);
+            studentFromDB.getGroups().add(studentGroup);
+            studentGroupService.updateStudentGroup(studentGroup.getId(), studentGroup);
+            addTask(studentGroup, studentFromDB);
+        }
+        return  "redirect:/groupList/" + groupId;
+    }
 
-
+    public void addTask(StudentGroup studentGroup, Student studentFromDB) {
         List<Task> tasks = studentGroup.getTasks();
         for(Task task : tasks) {
             TaskAssignment taskAssignment = new TaskAssignment(task, studentFromDB, studentGroup,status.inProgress);
@@ -138,8 +150,7 @@ public class groupController {
             studentFromDB.getAssignments().addAll(taskAssignmentsFromDB);
             taskService.updateTask(task.getId(), task);
         }
-        studentService.updateStudent(studentFromDB.getId(), student);
-        return  "redirect:/groupList/" + groupId;
+        studentService.updateStudent(studentFromDB.getId(), studentFromDB);
     }
 
     @PostMapping("diplomnic/saveStudents/{id}")
@@ -302,7 +313,9 @@ public class groupController {
                     }
                 }
                 else{
-                    students.add(studentService.getStudentByEmail(email));
+                    if(!studentGroup.getStudents().contains(studentService.getStudentByEmail(email))){
+                        students.add(studentService.getStudentByEmail(email));
+                    }
                 }
             }
         }

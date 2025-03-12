@@ -17,7 +17,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
     padding: 10px;
     border-bottom: 1px solid #ddd;
     margin: 1rem;
@@ -81,6 +80,11 @@
     font-weight: 700;
     font-size: 20px;
 }
+.date-font{
+    color: black;
+    font-weight: 700;
+    font-size: 18px;
+}
 .done-class {
     background: linear-gradient(to right,lightgreen , green);;
     font-weight: bold;
@@ -88,6 +92,14 @@
 
 .in-progress-class {
     background: linear-gradient(to right,navajowhite , yellow);
+    font-weight: bold;
+}
+.checking-class{
+    background: linear-gradient(to right, darksalmon , orange);
+    font-weight: bold;
+}
+.rejected-class{
+    background: linear-gradient(to right, salmon , red);
     font-weight: bold;
 }
 
