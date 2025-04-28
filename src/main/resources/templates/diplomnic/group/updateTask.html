@@ -15,6 +15,33 @@
         <a class="navbar-brand" href="/diplomnic">
             <img src="/images/logo_red.jpg" alt="НТУ ХПІ" width="75px" height="75px">
         </a>
+        <div class="d-flex gap-3">
+            <div class="borders">
+                <a href="/createGroup"  class="link-text">Створити нову групу</a>
+            </div>
+            <div>
+                <a href="/suggestedThemes"  class="link-text">Запропоновані теми</a>
+            </div>
+            <div class="lng borders">
+                <a href="#" class="lng__link">Завдання</a>
+                <div class="lng__list_wrapper">
+                    <div class="lng__list">
+                        <a href="/diplomnic/listOfTask" >Список завдань</a>
+                        <a href="/checkTask">Перевірити завдання</a>
+                        <a href="/createTask">Додати нове завдання</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="lng">
+            <a href="#" class="lng__link">Обліковий запис</a>
+            <div class="lng__list_wrapper">
+                <div class="lng__list">
+                    <a href="/information">Повна інформація</a>
+                    <a href="/logout" >Вийти з облікового запису</a>
+                </div>
+            </div>
+        </div>
     </div>
 </nav>
 <form th:action="@{/updateSavedTask/{id} (id=${task.id})}" th:object="${task}" method="POST">
@@ -31,8 +58,14 @@
                     <textarea id="details" class="input-field input-bottom" th:field="*{description}" spellcheck="false" required></textarea>
                 </div>
                 <div class="center">
-                    <form th:action="@{/groupInfo/{id} (id=${groupId})}" class="update" >
+                    <form th:unless="${groupId == 0}" th:action="@{/groupInfo/{id} (id=${groupId})}" class="update" >
                         <button class="home">Назад</button>
+                    </form>
+                    <form th:if="${groupId == 0}" >
+                        <button type="button" onclick="window.location.href='/diplomnic'" class="home">На головну</button>
+                    </form>
+                    <form th:action="@{/assignmentOfTask/{id} (id=${task.id})}">
+                        <button class="progress-button">Прогрес виконання завдання</button>
                     </form>
                     <button type="submit" class="submit-button">Прийняти</button>
                 </div>

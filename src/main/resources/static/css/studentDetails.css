@@ -127,3 +127,18 @@ input[type="radio"]:checked{
     align-items: center;
     gap: 20px;
 }
+.theme-status p{
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+.theme-button{
+    width: 250px;
+    height: 3rem;
+    border: 0;
+    color: white;
+    background-color: #9F1C21;
+    margin-top: 3rem;
+    margin-right: 1rem;
+    margin-left: 1rem;
+    border-radius: 10px;
+}

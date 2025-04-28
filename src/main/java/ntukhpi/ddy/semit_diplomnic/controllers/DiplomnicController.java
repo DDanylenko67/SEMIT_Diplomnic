@@ -29,13 +29,15 @@ public class DiplomnicController {
     private final SupervisorService supervisorService;
     private final TaskAssignmentService taskAssignmentService;
     private final StudentService studentService;
+    private final ThemeService themeService;
     public DiplomnicController(UserService userService, StudentGroupService studentGroupService, StudentService studentService,
-                               SupervisorService supervisorService, TaskAssignmentService taskAssignmentService) {
+                               SupervisorService supervisorService, TaskAssignmentService taskAssignmentService, ThemeService themeService) {
         this.userService = userService;
         this.studentGroupService = studentGroupService;
         this.supervisorService = supervisorService;
         this.taskAssignmentService = taskAssignmentService;
         this.studentService = studentService;
+        this.themeService = themeService;
     }
     @GetMapping("/diplomnic")
     public String diplomnic(Model model) {
@@ -54,6 +56,35 @@ public class DiplomnicController {
         }
         return "/diplomnic/diplomnic";
     }
+
+    @GetMapping("/information")
+    public String information(Model model){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(authority -> authority.getAuthority().equals("ROLE_STUDENT"))) {
+            Student student = studentService.getStudentByEmail(getCurrentUser().getLogin());
+            String themeUA = "";
+            String themeENG = "";
+            Theme theme = new Theme();
+            if(student.getTheme() != null){
+                if(student.getTheme().getThemeNameENG() != null){
+                    themeENG = student.getTheme().getThemeNameENG();
+                    theme.setThemeNameENG(themeENG);
+                }
+                themeUA = student.getTheme().getThemeNameUA();
+                theme.setStatus(student.getTheme().getStatus());
+                theme.setThemeNameUA(themeUA);
+            }
+            model.addAttribute("themeUA", themeUA);
+            model.addAttribute("themeENG", themeENG);
+            model.addAttribute("student", student);
+        }
+        else {
+            model.addAttribute("supervisor", supervisorService.findSupervisorByEmail(getCurrentUser().getLogin()));
+        }
+        return "/diplomnic/information";
+    }
+
     @GetMapping("/diplomnic/done")
     public String diplomnicDone(Model model) {
         Student student = studentService.getStudentByEmail(getCurrentUser().getLogin());
@@ -105,6 +136,7 @@ public class DiplomnicController {
         return "/diplomnic/checkTask";
     }
 
+
     @GetMapping("/diplomnic/calendar")
     public String calendar(Model model){
         Student student = studentService.getStudentByEmail(getCurrentUser().getLogin());
@@ -123,6 +155,28 @@ public class DiplomnicController {
         model.addAttribute("date", date);
         model.addAttribute("month", getMonthName(date));
         return "/diplomnic/calendar";
+    }
+
+    @GetMapping("suggestedThemes")
+    public String suggestedThemes(Model model) {
+        Supervisor supervisor = supervisorService.findSupervisorByEmail(getCurrentUser().getLogin());
+        List<Theme> themes = themeService.getThemesBySupervisorId(supervisor.getId());
+        List<Theme> suggestedThemes = new ArrayList<>();
+        for(Theme theme : themes){
+            if(theme.getStatus().equals(status.suggested)){
+                suggestedThemes.add(theme);
+            }
+        }
+        model.addAttribute("suggestedThemes", suggestedThemes);
+        return "/diplomnic/theme/suggestedThemes";
+    }
+
+    @GetMapping("/diplomnic/groupOfStudent")
+    public String groupOfStudent(Model model){
+        Student student = studentService.getStudentByEmail(getCurrentUser().getLogin());
+        List<StudentGroup> studentGroups = student.getGroups();
+        model.addAttribute("studentGroups", studentGroups);
+        return "/diplomnic/group/groupOfStudent";
     }
 
     public void addTasks(List<TaskAssignment> taskAssignments, LocalDate date, Model model) {

@@ -7,10 +7,10 @@
   <link rel="stylesheet" type="text/css" href="/css/footer.css">
   <link rel="stylesheet" type="text/css" href="/css/diplomnic.css">
   <link rel="stylesheet" type="text/css" href="/css/groupInfo.css">
-    <title>Дипломник | Прогрес виконання завдань</title>
+  <title>Дипломник | Прогрес виконання</title>
 </head>
 <body>
-<img src="/images/background_6.jpg"  class="background">
+<img src="/images/background_3.jpg"  class="background">
 <nav class="navbar navbar-expand-lg nav-dark" style="background-color: #9F1C21;">
   <div class="container">
     <a class="navbar-brand" href="/diplomnic">
@@ -48,42 +48,36 @@
 <main>
   <div class="supervisor-container">
     <div class="diplomnik-card">
-      <div th:object="${group}" class="group-block">
+      <div class="group-block">
         <div class="head">
-          <p th:text="${student.getName() + '   | Прогрес виконання завдань'}" class="left"></p>
-          <form th:action="@{/groupInfo/{id} (id=${group.id})}" class="update" >
+          <p class="left">Прогрес виконання завдання</p>
+          <form th:action="@{/diplomnic/listOfTask}" class="update" >
             <button class="non-button">Назад</button>
           </form>
         </div>
-        </div>
-      <div class="tasks-block" th:if="${#lists.isEmpty(student.getAssignmentByGroup(group.id))}">
-        <div class="task-title">
-          <p>Студент ще не здав жодної роботи</p>
-        </div>
-        <div>
-        <div th:each="assignment : ${student.getAssignmentByGroup(group.id)}">
+        <div th:each="assignment : ${assignments}">
           <div class="tasks-block"
                th:classappend="${
                   assignment.getStatus().getDisplayName() == 'зроблено' ? 'done-class' :
                   assignment.getStatus().getDisplayName() == 'виконується' ? 'in-progress-class' :
-                  assignment.getStatus().getDisplayName() == 'перевіряється' ? 'in-progress-class' :
+                   assignment.getStatus().getDisplayName() == 'відхилено' ? 'rejected-class' :
+                  assignment.getStatus().getDisplayName() == 'перевіряється' ? 'checking-class' :
                   'pass-class'
            }">
             <div class="task-title">
-              <p th:text="${assignment.getTask().getTitle()}"></p>
+              <p th:text="${assignment.getStudent().getName()}"></p>
             </div>
             <div class="end-task">
-              <div>
-                <p th:text="${assignment.getStatus().getDisplayName()}" class="status-font"></p>
-              </div>
+              <p th:text=" 'Статус роботи: ' + ${assignment.getStatus().getDisplayName()}" class="status-font"></p>
               <form th:action="@{/diplomnic/taskAssignment/{id} (id=${assignment.id})}" class="update" >
-                  <button class="submit-button">Перегляняти деталі виконання</button>
+                <button class="submit-button">Переглянути виконання завдання</button>
               </form>
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
 </main>
 <footer class="" style="background-color: white">

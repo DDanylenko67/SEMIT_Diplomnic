@@ -6,6 +6,7 @@ import ntukhpi.ddy.semit_diplomnic.entity.Theme;
 import java.util.List;
 
 public interface ThemeService {
+    Theme getThemeById(Long id);
     List<Theme> getAllThemes();
     Theme getThemeByNameUA(String name);
     Theme getThemeByNameEN(String name);
@@ -13,4 +14,5 @@ public interface ThemeService {
     Theme saveTheme(Theme theme);
     Theme updateTheme(Long id, Theme theme);
     void deleteThemeId(Long Id);
+    List<Theme> getThemesBySupervisorId(Long supervisorId);
 }

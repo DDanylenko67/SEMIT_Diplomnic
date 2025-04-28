@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="/css/footer.css">
+  <link rel="stylesheet" type="text/css" href="/css/studentDetails.css">
+  <title>Дипломник | Тема роботи</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg nav-dark" style="background-color: #9F1C21;">
+  <div class="container">
+    <a class="navbar-brand" href="/diplomnic">
+      <img src="/images/logo_red.jpg" alt="НТУ ХПІ" width="75px" height="75px">
+    </a>
+  </div>
+</nav>
+<main>
+  <div class="form-containers">
+    <div class="form-card">
+      <div class="form-container">
+        <div class="form-header">
+          <h5>Тема роботи</h5>
+        </div>
+        <div class="form-body">
+          <form th:action="@{/diplomnic/saveSuggestTheme} "  th:object="${student}" method="post">
+            <div class="form-group mb-3">
+              <label class="control-label"> Ім'я студента</label>
+              <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      th:field="*{name}"
+                      class="form-control"
+                      readonly
+              />
+            </div>
+              <div class="form-group mb-3">
+                <label for="SuggestThemeUA" class="card-label"><a>Тема дипломної роботи українською</a></label>
+                <textarea id="SuggestThemeUA" name="themeUA" th:text="${themeENG}" class="input-field input-bottom" MAXLENGTH="255" spellcheck="false" required></textarea>
+              </div>
+              <div class="form-group mb-3">
+                <label for="SuggestThemeENG" class="card-label"><a>Тема дипломної роботи англійською</a></label>
+                <textarea id="SuggestThemeENG"  name="themeENG" th:text="${themeUA}" class="input-field input-bottom" MAXLENGTH="255" spellcheck="false"></textarea>
+              </div>
+              <div th:if="${supervisors.size() == 0}">
+                  <p>У вас немає керівника дипломної роботи</p>
+              </div>
+            <div th:if="${supervisors.size() == 1}">
+              <input type="hidden" th:value="${supervisors.get(0).id}" id="supervisor_id" name="supervisor_id">
+            </div>
+            <div th:if="${supervisors.size() > 1}">
+                <select id="themeStatus" name="supervisor"  class="form-control"  >
+                  <option th:each="supervisor : ${supervisors}" th:value="${supervisor.id}" th:text="${supervisor.getName()}">Запропонована студентом</option>
+                </select>
+            </div>
+            <div class="center">
+              <button type="button" onclick="window.location.href='/diplomnic'" class="home">На головну</button>
+              <div th:unless="${supervisors.size() == 0}">
+                <button type="submit" class="theme-button">Запропонувати тему</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+<nav class="" style="background-color: white">
+  <div class="line-container">
+    <div class="custom-line"></div>
+  </div>
+  <div class="footer-container">
+    <div class="left-container">
+      <div class="image">
+        <img src="/images/logo_white.png" alt=""></img>
+      </div>
+      <div class="text">
+        <a style="color: #9F1C21; text-align: center">НТУ “ХПІ”<br></a>
+        <a style="color: #9F1C21"><br>Вищий навчальний заклад IV ступеню акредитації державної форми<br>
+          власності, підпорядкований Міністерству освіти й науки України<br><br> в 2010 році отримав статус дослідницького національного університету</a>
+      </div>
+    </div>
+    <div class="right-container">
+      <div style="color: #9F1C21">
+        <a style="color: #9F1C21; text-align: center" >Наша адреса<br></a>
+        <a><br>НТУ "ХПІ"<br>вул. Кирпичова, 2<br>Харків, 61002<br>Україна</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>

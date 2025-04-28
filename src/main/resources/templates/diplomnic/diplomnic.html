@@ -17,39 +17,40 @@
                 <img src="/images/logo_red.jpg" alt="НТУ ХПІ" width="75px" height="75px">
             </a>
             <div th:if="${#authorization.expression('hasRole(''ROLE_SUPERVISOR'')')}" class="d-flex gap-3">
-                <div>
+                <div class="borders">
                     <a href="/createGroup"  class="link-text">Створити нову групу</a>
                 </div>
                 <div>
-                    <a href="/checkTask"  class="link-text">Перевірити завдання</a>
+                    <a href="/suggestedThemes"  class="link-text">Запропоновані теми</a>
                 </div>
-                <div>
-                    <a href="/createTask"  class="link-text">Додати нове завдання</a>
+                <div class="lng borders">
+                    <a href="#" class="lng__link">Завдання</a>
+                    <div class="lng__list_wrapper">
+                        <div class="lng__list">
+                            <a href="/diplomnic/listOfTask" >Список завдань</a>
+                            <a href="/checkTask">Перевірити завдання</a>
+                            <a href="/createTask">Додати нове завдання</a>
+                        </div>
+                    </div>
                 </div>
-            </diV>
+            </div>
+
             <diV th:if="${#authorization.expression('hasRole(''ROLE_STUDENT'')')}" class="d-flex gap-5">
                 <div>
-                    <a href="/selectTheme"  class="link-text">Обрати тему</a>
+                    <a href="/selectTheme"  class="link-text">Тема роботи</a>
                 </div>
                 <div>
-                    <a href="/groupOfStudent"  class="link-text">Мої групи</a>
+                    <a href="/diplomnic/groupOfStudent"  class="link-text">Мої групи</a>
                 </div>
             </diV>
-            <header>
-                <div class="menu-btn">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+            <div class="lng">
+                <a href="#" class="lng__link">Обліковий запис</a>
+                <div class="lng__list_wrapper">
+                    <div class="lng__list">
+                        <a href="/information">Повна інформація</a>
+                        <a href="/logout" >Вийти з облікового запису</a>
+                    </div>
                 </div>
-            </header>
-
-            <div class="menu">
-                <nav>
-                    <ul>
-                        <li><a href="/logout">Вихід з облікового запису</a></li>
-                        <li><a href="#">Налаштування</a></li>
-                    </ul>
-                </nav>
             </div>
         </div>
     </nav>
@@ -57,7 +58,15 @@
         <div th:if="${#authorization.expression('hasRole(''ROLE_SUPERVISOR'')')}">
             <div class="supervisor-container">
                 <div class="diplomnik-card">
-                    <div th:each="group : ${groups}" class="group-block">
+                    <div class="tasks-block" th:if="${#lists.isEmpty(groups)}" >
+                        <div class="task-title">
+                            <p>Нажаль, ви не маєте жодної групи</p>
+                        </div>
+                        <form th:action="@{/createGroup}" class="update" >
+                            <button class="submit-button">Створити нову групу</button>
+                        </form>
+                    </div>
+                    <div  th:unless="${#lists.isEmpty(groups)}" th:each="group : ${groups}" class="group-block">
                         <div class="head">
                             <p th:text="${group.getGroupName()}" class="left"></p>
                             <form th:action="@{/groupInfo/{id} (id=${group.id})}" class="update" >
@@ -65,6 +74,11 @@
                             </form>
                         </div>
                         <div class="students">
+                            <div class="tasks-block" th:if="${#lists.isEmpty(group.students)}" >
+                                <div class="task-title">
+                                    <p>Нажаль, немає жодного студента в групі</p>
+                                </div>
+                            </div>
                             <table th:each="student : ${group.students}" class="table-full-width">
                                 <tr>
                                     <td  th:text="${student.getName()}"></td>

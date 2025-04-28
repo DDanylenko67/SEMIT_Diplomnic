@@ -33,4 +33,33 @@ public class LoginController {
     public String homes() {
         return "redirect:/diplomnic";
     }
+
+    @GetMapping("/diplomnic/signUp")
+    public String signUp(Model model) {
+        UserDto user = new UserDto();
+        model.addAttribute("user", user);
+        return "/login/signup";
+    }
+    @PostMapping("/register/save")
+    public String registration(@Valid @ModelAttribute("user") UserDto userDto,
+                               BindingResult result,
+                               Model model){
+        User existingUser = userService.findUserByEmail(userDto.getEmail());
+
+        if(existingUser != null && existingUser.getLogin() != null && !existingUser.getLogin().isEmpty()){
+            return "redirect:/login?exist";
+        }
+
+        if(result.hasErrors()){
+            model.addAttribute("user", userDto);
+            return "/login/signup";
+        }
+        if(userDto.getAcademicRang().isEmpty()){
+            userDto.setAcademicRang("");
+        }
+        UserDto supervisorToSave = new UserDto(userDto.getName(), userDto.getEmail(), userDto.getPassword(),
+                userDto.getAcademicRang(), userDto.getAcademicDegree());
+        userService.saveUserSupervisor(supervisorToSave);
+        return "redirect:/login?success";
+    }
 }

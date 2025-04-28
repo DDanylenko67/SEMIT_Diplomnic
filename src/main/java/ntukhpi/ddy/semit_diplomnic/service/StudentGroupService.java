@@ -9,8 +9,8 @@ import java.util.List;
 public interface StudentGroupService {
     List<StudentGroup> getAllStudentGroups();
     List<StudentGroup> getStudentsGroupBySupervisor(Supervisor supervisor);
-    List<Student> getStudentsByStudentGroupName(String studentGroupName);
-    StudentGroup getStudentGroupByName(String groupName);
+    List<Student> getStudentsByStudentGroupName(String studentGroupName, Supervisor supervisor);
+    StudentGroup getStudentGroupByName(String groupName, Supervisor supervisor);
     StudentGroup getStudentGroupById(Long id);
     StudentGroup saveStudentGroup(StudentGroup studentGroup);
     StudentGroup updateStudentGroup(Long id, StudentGroup studentGroup);

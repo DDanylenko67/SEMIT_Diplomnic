@@ -236,7 +236,7 @@ public class groupController {
         try (InputStream inputStream = file.getInputStream();
              Workbook workbook = new XSSFWorkbook(inputStream)) {
             Sheet sheet = workbook.getSheetAt(0);
-            StudentGroup studentGroup = studentGroupService.getStudentGroupByName(studentGroup1.getGroupName());
+            StudentGroup studentGroup = studentGroupService.getStudentGroupByName(studentGroup1.getGroupName(), supervisor);
             List<Student> students = readCells(sheet, studentGroup, supervisor);
             for(Task task: studentGroup.getTasks()){
                 for(Student student : students){
@@ -247,7 +247,7 @@ public class groupController {
                     student.getAssignments().addAll(taskAssignmentsFromDB);
                 }
             }
-            List<Student> temp = studentGroupService.getStudentsByStudentGroupName(studentGroup1.getGroupName());
+            List<Student> temp = studentGroupService.getStudentsByStudentGroupName(studentGroup1.getGroupName(), supervisor);
             temp.addAll(students);
             studentGroup.setStudents(temp);
             studentGroupService.updateStudentGroup(studentGroup.getId(), studentGroup);
@@ -269,9 +269,9 @@ public class groupController {
         try (InputStream inputStream = file.getInputStream();
              Workbook workbook = new XSSFWorkbook(inputStream)) {
             Sheet sheet = workbook.getSheetAt(0);
-            StudentGroup studentGroup = studentGroupService.getStudentGroupByName(studentGroup1.getGroupName());
+            StudentGroup studentGroup = studentGroupService.getStudentGroupByName(studentGroup1.getGroupName(), supervisor);
             List<Student> temp = readCells(sheet, studentGroup, supervisor);
-            List<Student> students = studentGroupService.getStudentsByStudentGroupName(studentGroup1.getGroupName());
+            List<Student> students = studentGroupService.getStudentsByStudentGroupName(studentGroup1.getGroupName(), supervisor);
             students.addAll(temp);
             studentGroup.setStudents(students);
             studentGroupService.updateStudentGroup(studentGroup.getId(), studentGroup);

@@ -28,14 +28,14 @@ public class StudentGroupImpl implements StudentGroupService {
     }
 
     @Override
-    public List<Student> getStudentsByStudentGroupName(String studentGroupName) {
-        StudentGroup studentGroup = studentGroupRepository.findByGroupName(studentGroupName);
+    public List<Student> getStudentsByStudentGroupName(String studentGroupName, Supervisor supervisor) {
+        StudentGroup studentGroup = studentGroupRepository.findStudentGroupsByGroupNameAndSupervisor(studentGroupName, supervisor);
         return studentGroup.getStudents();
     }
 
     @Override
-    public StudentGroup getStudentGroupByName(String groupName) {
-        return studentGroupRepository.findByGroupName(groupName);
+    public StudentGroup getStudentGroupByName(String groupName, Supervisor supervisor) {
+        return studentGroupRepository.findStudentGroupsByGroupNameAndSupervisor(groupName, supervisor);
     }
 
     @Override

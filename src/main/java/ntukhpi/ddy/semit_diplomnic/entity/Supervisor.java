@@ -14,7 +14,7 @@ public class Supervisor {
     private Long id;
     @Column(nullable = false, length = 100)
     String name;
-    @Column(length = 30)
+    @Column(length = 100)
     String academicRang;
     @Column(length = 30)
     String academicDegree;

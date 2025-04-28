@@ -1,9 +1,6 @@
 package ntukhpi.ddy.semit_diplomnic.controllers;
 
-import ntukhpi.ddy.semit_diplomnic.entity.Student;
-import ntukhpi.ddy.semit_diplomnic.entity.Supervisor;
-import ntukhpi.ddy.semit_diplomnic.entity.Theme;
-import ntukhpi.ddy.semit_diplomnic.entity.User;
+import ntukhpi.ddy.semit_diplomnic.entity.*;
 import ntukhpi.ddy.semit_diplomnic.service.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,6 +8,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ntukhpi.ddy.semit_diplomnic.enums.status.status;
+
+import java.util.ArrayList;
+import java.util.List;
+
 @Controller
 public class StudentController {
         private final UserService userService;
@@ -102,6 +103,99 @@ public class StudentController {
                 themeService.updateTheme(theme.getId(), theme);
             }
         }
+        return "redirect:/diplomnic";
+    }
+
+    @GetMapping("/selectTheme")
+    public String selectTheme(Model model){
+            Student student = studentService.getStudentByEmail(getCurrentUser().getLogin());
+            Theme theme = student.getTheme();
+            if(theme != null){
+                model.addAttribute("theme", theme);
+            }
+            else{
+                return "redirect:/suggestTheme";
+            }
+            model.addAttribute("student", student);
+            return "/diplomnic/theme/selectTheme";
+    }
+    @PostMapping("/diplomnic/submitTheme")
+    public String submitTheme(Model model){
+            Student student = studentService.getStudentByEmail(getCurrentUser().getLogin());
+            Theme theme = student.getTheme();
+            theme.setStatus(status.done);
+            themeService.updateTheme(theme.getId(), theme);
+            return "redirect:/diplomnic";
+    }
+    @GetMapping("/suggestTheme")
+    public String suggestTheme(Model model){
+        Student student = studentService.getStudentByEmail(getCurrentUser().getLogin());
+        List<StudentGroup> studentGroups = student.getGroups();
+        List<Supervisor> supervisors = new ArrayList<>();
+        if(!studentGroups.isEmpty()){
+            for(StudentGroup studentGroup : studentGroups){
+                if(!supervisors.contains(studentGroup.getSupervisor())){
+                    supervisors.add(studentGroup.getSupervisor());
+                }
+            }
+        }
+        model.addAttribute("supervisors", supervisors);
+        model.addAttribute("student", student);
+        String themeUA = "";
+        String themeENG = "";
+        model.addAttribute("themeUA", themeUA);
+        model.addAttribute("themeENG", themeENG);
+        return "/diplomnic/theme/suggestTheme";
+    }
+    @PostMapping("/diplomnic/saveSuggestTheme")
+    public String saveSuggestTheme(Model model,
+                                   @RequestParam String themeUA,
+                                   @RequestParam(required = false) String themeENG,
+                                   @RequestParam(value = "status", required = false) Long id,
+                                   @RequestParam(value = "supervisor_id", required = false) Long supervisor_id) {
+        if (supervisor_id == null && id != null) {
+            supervisor_id = id;
+        }
+        Supervisor supervisor = supervisorService.getSupervisorById(supervisor_id);
+        Student student = studentService.getStudentByEmail(getCurrentUser().getLogin());
+        Theme theme;
+        if(themeENG == null || themeENG.isEmpty() || themeENG.equals(" ")){
+            theme = new Theme(themeUA, status.suggested, supervisor, student);
+        }
+        else {
+            theme = new Theme(themeUA, themeENG,status.suggested, supervisor, student);
+        }
+        if(student.getTheme() != null){
+            Theme themeOfStudent = student.getTheme();
+            themeService.updateTheme(themeOfStudent.getId(), theme);
+        }
+        else {
+            themeService.saveTheme(theme);
+        }
+        student.setTheme(theme);
+        studentService.updateStudent(student.getId(), student);
+        return "redirect:/diplomnic";
+    }
+    @GetMapping("/admitTheme/student/{id}")
+    public String admitTheme(Model model, @PathVariable Long id){
+        Student student = studentService.getStudentById(id);
+        Theme theme = student.getTheme();
+        model.addAttribute("student", student);
+        model.addAttribute("theme", theme);
+        return "/diplomnic/theme/admitTheme";
+    }
+    @PostMapping("/diplomnic/admitTheme{id}")
+    public String admitOfStudentTheme(Model model,@PathVariable Long id){
+            Theme theme = themeService.getThemeById(id);
+            theme.setStatus(status.done);
+            themeService.updateTheme(theme.getId(), theme);
+            return "redirect:/diplomnic";
+    }
+    @PostMapping("/diplomnic/rejectTheme{id}" )
+    public String rejectTheme(Model model, @PathVariable Long id){
+        Theme theme = themeService.getThemeById(id);
+        theme.setStatus(status.rejected);
+        themeService.updateTheme(theme.getId(), theme);
         return "redirect:/diplomnic";
     }
 

@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/css" href="/css/footer.css">
     <link rel="stylesheet" type="text/css" href="/css/diplomnic.css">
     <link rel="stylesheet" type="text/css" href="/css/groupInfo.css">
-    <title>Дипломник | Прогрес виконання завдань групою</title>
+    <title>Дипломник | Список завдань</title>
 </head>
 <body>
 <img src="/images/background_3.jpg"  class="background">
@@ -48,33 +48,36 @@
 <main>
     <div class="supervisor-container">
         <div class="diplomnik-card">
-            <div th:object="${group}" class="group-block">
+            <div  class="group-block">
                 <div class="head">
-                    <p th:text="${group.getGroupName()}" class="left"></p>
-                    <form th:action="@{/groupInfo/{id} (id=${group.id})}" class="update" >
-                        <button class="non-button">Назад</button>
+                    <div class="left-corner">
+                        <p>Список завдань</p>
+                        <label class="switch">
+                            <input type="checkbox" id="toggleSwitch">
+                            <span class="slider round"></span>
+                        </label>
+                        <p>Календарь</p>
+                    </div>
+                    <form th:action="@{/diplomnic}" class="update" >
+                        <button class="non-button">На головну</button>
                     </form>
                 </div>
                 <div class="tasks-block">
-                    <div th:if="${#lists.isEmpty(students)}" class="task-title">
-                        <p>На жаль, немає жодного студента</p>
+                    <div th:if="${#lists.isEmpty(listOfTask)}" class="task-title">
+                        <p>На жаль, немає жодного завдання</p>
                     </div>
                 </div>
-                <div th:each="student : ${students}">
+                <div th:each="task : ${listOfTask}">
                     <div class="tasks-block">
                         <div class="task-title">
-                            <p th:text="${student.getName()}"></p>
+                            <p th:text="${task.getTitle()}"></p>
                         </div>
                         <div class="end-task">
-                            <div >
-                                <p th:text="'Виконано завдань: ' + ${group.getStatusByStudent(student.getId())} + '/' + ${group.getTasks().size()}"></p>
-                            </div>
-                             <div th:if="${group.getTasks().size() != 0}">
-                                 <form th:action="@{/studentAssigments/{id} (id=${student.id})}" class="update" >
-                                    <input type="hidden" th:value="${group.id}" id="group_id" name="group_id">
-                                    <button class="submit-button">Перегляняти деталі</button>
-                                </form>
-                             </div>
+                            <p th:text=" 'Строк здачи: ' + ${task.getDeadline()}"></p>
+                            <form th:action="@{/updateTask/{id} (id=${task.id})}" class="update" >
+                                <input type="hidden" th:value="0" id="group_id" name="group_id">
+                                <button class="submit-button">Редагувати завдання</button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -129,7 +132,24 @@
         </div>
     </div>
 </footer>
+<script>
+    document.getElementById("toggleSwitch").addEventListener("change", function() {
+        if (this.checked) {
+            window.location.href = "/diplomnic/supervisorCalendar";
+        } else {
+            window.location.href = "/diplomnic/listOfTask";
+        }
+    });
+</script>
+<script>
+    let menuBtn = document.querySelector('.menu-btn');
+    let menu = document.querySelector('.menu');
 
+    menuBtn.addEventListener('click', function(){
+        menuBtn.classList.toggle('active');
+        menu.classList.toggle('active');
+    })
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

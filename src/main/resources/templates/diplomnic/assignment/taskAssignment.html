@@ -31,10 +31,13 @@
             <div>
               <input type="file" name="file" class="file-input" multiple >
             </div>
-            <div th:if="${taskAssignment.getStatus().getDisplayName() == 'перевіряється' || taskAssignment.getStatus().getDisplayName() == 'виконано'}">
+            <div th:if="${taskAssignment.getStatus().getDisplayName() == 'перевіряється'
+            || taskAssignment.getStatus().getDisplayName() == 'зроблено'}">
               <button type="submit" class="submit-button">Здати завдання ще раз</button>
             </div>
-            <div th:unless="${taskAssignment.getStatus().getDisplayName() == 'перевіряється' || taskAssignment.getStatus().getDisplayName() == 'виконано'}">
+            <div th:unless="${taskAssignment.getStatus().getDisplayName() == 'перевіряється'
+            || taskAssignment.getStatus().getDisplayName() == 'зроблено'
+            }" >
               <button type="submit" class="submit-button">Здати завдання</button>
             </div>
           </div>

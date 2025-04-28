@@ -7,7 +7,8 @@
     <link rel="stylesheet" type="text/css" href="/css/footer.css">
     <link rel="stylesheet" type="text/css" href="/css/diplomnic.css">
     <link rel="stylesheet" type="text/css" href="/css/groupInfo.css">
-    <title>Дипломник | Прогрес виконання завдань групою</title>
+    <link rel="stylesheet" type="text/css" href="/css/calendar.css">
+    <title>Дипломник | Календар завдань</title>
 </head>
 <body>
 <img src="/images/background_3.jpg"  class="background">
@@ -46,42 +47,51 @@
     </div>
 </nav>
 <main>
-    <div class="supervisor-container">
-        <div class="diplomnik-card">
-            <div th:object="${group}" class="group-block">
+        <div class="supervisor-container">
+            <div class="diplomnik-card">
                 <div class="head">
-                    <p th:text="${group.getGroupName()}" class="left"></p>
-                    <form th:action="@{/groupInfo/{id} (id=${group.id})}" class="update" >
-                        <button class="non-button">Назад</button>
-                    </form>
-                </div>
-                <div class="tasks-block">
-                    <div th:if="${#lists.isEmpty(students)}" class="task-title">
-                        <p>На жаль, немає жодного студента</p>
+                    <div class="left-corner">
+                        <p>Список завдань</p>
+                        <label class="switch">
+                            <input type="checkbox" id="toggleSwitch" checked>
+                            <span class="slider round"></span>
+                        </label>
+                        <p>Календарь</p>
                     </div>
                 </div>
-                <div th:each="student : ${students}">
-                    <div class="tasks-block">
-                        <div class="task-title">
-                            <p th:text="${student.getName()}"></p>
+                <div class="tasks-block">
+                    <div class="carousel">
+                        <a th:href="@{/diplomnic/supervisorCalendar/update(date=${date.minusMonths(1)})}" class="arrow left">❮</a>
+                        <div class="date">
+                            <span ><a th:text="${month}"></a></span>
+                            <span class="year"><a th:text="${date.getYear()}"></a></span>
                         </div>
-                        <div class="end-task">
-                            <div >
-                                <p th:text="'Виконано завдань: ' + ${group.getStatusByStudent(student.getId())} + '/' + ${group.getTasks().size()}"></p>
-                            </div>
-                             <div th:if="${group.getTasks().size() != 0}">
-                                 <form th:action="@{/studentAssigments/{id} (id=${student.id})}" class="update" >
-                                    <input type="hidden" th:value="${group.id}" id="group_id" name="group_id">
-                                    <button class="submit-button">Перегляняти деталі</button>
-                                </form>
-                             </div>
+                        <a th:href="@{/diplomnic/supervisorCalendar/update(date=${date.plusMonths(1)})}" class="arrow right">❯</a>
+                    </div>
+                </div>
+                <div class="tasks-block center">
+                    <div class="calendar">
+                        <div class="day header">Пн</div>
+                        <div class="day header">Вт</div>
+                        <div class="day header">Ср</div>
+                        <div class="day header">Чт</div>
+                        <div class="day header">Пт</div>
+                        <div class="day header">Сб</div>
+                        <div class="day header">Нд</div>
+                        <div th:each="day : ${calendarDays}"
+                             th:class="${tasks.![deadline.getDayOfMonth()].contains(day) ? 'day task' : 'day'}"
+                             th:style="${day == 0 ? 'visibility: hidden;' : ''}">
+                            <a th:if="${tasks.![deadline.getDayOfMonth()].contains(day)}"
+                               th:href="@{/diplomnic/supervisorCalendar/assignmentDate(date=${#dates.format(#dates.create(date.getYear(), date.monthValue, day), 'yyyy-MM-dd')})}"
+                               th:text="${day}"></a>
+
+                            <span th:unless="${tasks.![deadline.getDayOfMonth()].contains(day)}"
+                                  th:text="${day}"></span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-
 </main>
 <footer class="" style="background-color: white">
     <div class="line-container">
@@ -129,7 +139,24 @@
         </div>
     </div>
 </footer>
+<script>
+    document.getElementById("toggleSwitch").addEventListener("change", function() {
+        if (this.checked) {
+            window.location.href = "/diplomnic/supervisorCalendar";
+        } else {
+            window.location.href = "/diplomnic/listOfTask";
+        }
+    });
+</script>
+<script>
+    let menuBtn = document.querySelector('.menu-btn');
+    let menu = document.querySelector('.menu');
 
+    menuBtn.addEventListener('click', function(){
+        menuBtn.classList.toggle('active');
+        menu.classList.toggle('active');
+    })
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

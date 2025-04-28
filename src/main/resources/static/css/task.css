@@ -137,3 +137,16 @@ input[type="radio"]:checked{
     justify-items: center;
     margin-bottom: 2rem;
 }
+.unless{
+    margin: 1rem;
+}
+.progress-button{
+    width: 225px;
+    height: 3rem;
+    border: 0;
+    color: white;
+    background-color: #9F1C21;
+    margin-top: 3rem;
+    margin-right: 1rem;
+    border-radius: 10px;
+}

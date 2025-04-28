@@ -136,6 +136,9 @@ public class TaskController {
                 }
             }
         }
+        if(groupId == 0){
+            return "redirect: /diplomnic";
+        }
         return  "redirect:/groupTasks/" + groupId;
     }
 
@@ -149,15 +152,19 @@ public class TaskController {
     public void deleteAssignments(Task task, StudentGroup studentGroup) {
         if (!studentGroup.getStudents().isEmpty()) {
             for (Student student : studentGroup.getStudents()) {
-                Iterator<TaskAssignment> iterator = student.getAssignments().iterator();
-                while (iterator.hasNext()) {
-                    TaskAssignment taskAssignment = iterator.next();
-                    if (taskAssignment.getTask().getId().equals(task.getId())) {
-                        iterator.remove();
-                        taskAssignmentService.deleteTaskAssignmentById(taskAssignment.getId());
-                        task.getAssignments().remove(taskAssignment);
-                        taskService.updateTask(task.getId(), task);
+                List<TaskAssignment> assignmentsToRemove = new ArrayList<>();
+                for (TaskAssignment assignment : student.getAssignments()) {
+                    if (assignment.getTask().getId().equals(task.getId())) {
+                        assignmentsToRemove.add(assignment);
                     }
+                }
+
+                for (TaskAssignment assignment : assignmentsToRemove) {
+                    student.getAssignments().remove(assignment);
+                    task.getAssignments().remove(assignment);
+                    studentService.updateStudent(student.getId(), student);
+                    taskService.updateTask(task.getId(), task);
+                    taskAssignmentService.deleteTaskAssignmentById(assignment.getId());
                 }
             }
         }

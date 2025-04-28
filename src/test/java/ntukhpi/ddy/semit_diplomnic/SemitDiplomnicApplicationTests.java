@@ -90,7 +90,8 @@ class SemitDiplomnicApplicationTests {
 	@Test
 	void getStudents() {
 		StudentGroup studentGroup = studentGroupService.getStudentGroupById(1L);
-		List<Student> students = studentGroupService.getStudentsByStudentGroupName(studentGroup.getGroupName());
+		Supervisor supervisor = supervisorService.getSupervisorById(1L);
+		List<Student> students = studentGroupService.getStudentsByStudentGroupName(studentGroup.getGroupName(), supervisor);
 		for (Student s : students) {
 			System.out.println(s.getName());
 		}

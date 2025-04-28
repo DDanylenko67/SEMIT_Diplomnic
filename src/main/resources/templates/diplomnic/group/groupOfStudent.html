@@ -7,10 +7,10 @@
     <link rel="stylesheet" type="text/css" href="/css/footer.css">
     <link rel="stylesheet" type="text/css" href="/css/diplomnic.css">
     <link rel="stylesheet" type="text/css" href="/css/groupInfo.css">
-    <title>Дипломник | Прогрес виконання завдань групою</title>
+    <title>Дипломник | Список груп</title>
 </head>
 <body>
-<img src="/images/background_3.jpg"  class="background">
+<img src="/images/background_6.jpg"  class="background">
 <nav class="navbar navbar-expand-lg nav-dark" style="background-color: #9F1C21;">
     <div class="container">
         <a class="navbar-brand" href="/diplomnic">
@@ -48,33 +48,20 @@
 <main>
     <div class="supervisor-container">
         <div class="diplomnik-card">
-            <div th:object="${group}" class="group-block">
+            <div th:if="${#lists.isEmpty(studentGroups)}" class="task-title">
+                <p>На жаль, немає жодного студента в групі</p>
+            </div>
+            <div th:each="group : ${studentGroups}" class="group-block">
                 <div class="head">
                     <p th:text="${group.getGroupName()}" class="left"></p>
-                    <form th:action="@{/groupInfo/{id} (id=${group.id})}" class="update" >
-                        <button class="non-button">Назад</button>
-                    </form>
+                    <p th:text="'Керівник: ' + ${group.getSupervisor().getName()}" class="left"></p>
+                    <button type="button" onclick="window.location.href='/diplomnic'" class="home" style="margin-bottom: 1rem; margin-top: 1rem">На головну</button>
                 </div>
-                <div class="tasks-block">
-                    <div th:if="${#lists.isEmpty(students)}" class="task-title">
-                        <p>На жаль, немає жодного студента</p>
-                    </div>
-                </div>
-                <div th:each="student : ${students}">
+                <div th:each="student : ${group.getStudents()}">
                     <div class="tasks-block">
-                        <div class="task-title">
+                        <div class="task-title" style="margin: 2rem">
                             <p th:text="${student.getName()}"></p>
-                        </div>
-                        <div class="end-task">
-                            <div >
-                                <p th:text="'Виконано завдань: ' + ${group.getStatusByStudent(student.getId())} + '/' + ${group.getTasks().size()}"></p>
-                            </div>
-                             <div th:if="${group.getTasks().size() != 0}">
-                                 <form th:action="@{/studentAssigments/{id} (id=${student.id})}" class="update" >
-                                    <input type="hidden" th:value="${group.id}" id="group_id" name="group_id">
-                                    <button class="submit-button">Перегляняти деталі</button>
-                                </form>
-                             </div>
+                            <p th:if="${student.getTheme() != null}" th:text="${student.getTheme().getThemeNameUA()}" class="theme"></p>
                         </div>
                     </div>
                 </div>

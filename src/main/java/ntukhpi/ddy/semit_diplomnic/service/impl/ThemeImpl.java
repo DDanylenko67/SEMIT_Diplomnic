@@ -21,6 +21,11 @@ public class ThemeImpl implements ThemeService {
     }
 
     @Override
+    public Theme getThemeById(Long id) {
+        return themeRepository.findThemeById(id);
+    }
+
+    @Override
     public List<Theme> getAllThemes() {
         return themeRepository.findAll();
     }
@@ -59,5 +64,10 @@ public class ThemeImpl implements ThemeService {
     @Override
     public void deleteThemeId(Long Id) {
         themeRepository.deleteById(Id);
+    }
+
+    @Override
+    public List<Theme> getThemesBySupervisorId(Long supervisorId) {
+        return themeRepository.findThemesBySupervisorId(supervisorId);
     }
 }

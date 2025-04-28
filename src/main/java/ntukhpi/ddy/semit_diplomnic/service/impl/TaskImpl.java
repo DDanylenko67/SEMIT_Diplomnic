@@ -1,6 +1,7 @@
 package ntukhpi.ddy.semit_diplomnic.service.impl;
 
 import ntukhpi.ddy.semit_diplomnic.entity.Student;
+import ntukhpi.ddy.semit_diplomnic.entity.Supervisor;
 import ntukhpi.ddy.semit_diplomnic.entity.Task;
 import ntukhpi.ddy.semit_diplomnic.repository.StudentRepository;
 import ntukhpi.ddy.semit_diplomnic.repository.TaskRepository;
@@ -51,5 +52,10 @@ public class TaskImpl implements TaskService {
     @Override
     public void deleteTaskById(Long id) {
         taskRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Task> getTasksBySupervisor(Supervisor supervisor) {
+        return taskRepository.findTasksBySupervisor(supervisor);
     }
 }

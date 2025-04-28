@@ -1,6 +1,7 @@
 package ntukhpi.ddy.semit_diplomnic.service;
 
 import ntukhpi.ddy.semit_diplomnic.entity.Student;
+import ntukhpi.ddy.semit_diplomnic.entity.Supervisor;
 import ntukhpi.ddy.semit_diplomnic.entity.Task;
 
 import java.time.LocalDate;
@@ -13,5 +14,6 @@ public interface TaskService {
     Task updateTask(Long id, Task task);
     Task getTaskByDateAndDescriptionAndTitle(LocalDate date, String description, String title);
     void deleteTaskById(Long id);
+    List<Task> getTasksBySupervisor(Supervisor supervisor);
 
 }
