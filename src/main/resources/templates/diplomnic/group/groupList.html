@@ -79,8 +79,8 @@
                         <button class="import-button">Додати студента</button>
                     </form>
                     <form th:action="@{/diplomnic/saveStudents/{id} (id=${group.id})}" enctype="multipart/form-data" method="post">
-                        <input type="file" name="file" id="file" class="file-input">
-                        <button type="submit" class="import-button ">Додати студентів з Excel файлу</button>
+                        <input type="file" name="file" id="file" class="file-input" onchange="toggleButtonVisibility()">
+                        <button type="submit" class="import-button " id="submitBtn" style="display: none;">Додати студентів з Excel файлу</button>
                     </form>
                 </div>
             </div>
@@ -134,7 +134,18 @@
         </div>
     </div>
 </footer>
+<script>
+    function toggleButtonVisibility() {
+        const fileInput = document.getElementById('file');
+        const submitBtn = document.getElementById('submitBtn');
 
+        if (fileInput.files.length > 0) {
+            submitBtn.style.display = 'inline-block';
+        } else {
+            submitBtn.style.display = 'none';
+        }
+    }
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

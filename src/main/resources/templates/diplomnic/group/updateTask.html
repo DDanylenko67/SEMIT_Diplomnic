@@ -57,7 +57,7 @@
                     <label for="details" class="card-label"><a>Деталі до завдання</a></label>
                     <textarea id="details" class="input-field input-bottom" th:field="*{description}" spellcheck="false" required></textarea>
                 </div>
-                <div class="center">
+                <div class="center" style="padding-left: 1rem">
                     <form th:unless="${groupId == 0}" th:action="@{/groupInfo/{id} (id=${groupId})}" class="update" >
                         <button class="home">Назад</button>
                     </form>

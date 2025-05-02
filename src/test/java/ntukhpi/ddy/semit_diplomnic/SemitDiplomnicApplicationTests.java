@@ -37,7 +37,7 @@ class SemitDiplomnicApplicationTests {
 
 	@Test
 	void addSupervisor() {
-		UserDto userDto = new UserDto("Дмитро Едуардович Двухглавов", "dmytro.dvukhhlavov@khpi.edu.ua", "admin123","Доктор наук", "Доцент");
+		UserDto userDto = new UserDto("Дмитро Едуардович Двухглавов", "dmytro.dvukhhlavov@khpi.edu.ua", "admin123", "Доцент", "Доктор наук");
 		userService.saveUserSupervisor(userDto);
 	}
 	@Test
@@ -208,7 +208,6 @@ class SemitDiplomnicApplicationTests {
 		Student student = studentService.getStudentById(1L);
 		Theme theme = themeService.getThemeByStudent(student);
 		theme.setStatus(status.done);
-		theme.setComment("Гарна тема, намагайся зробити як можна раніше");
 		themeService.updateTheme(theme.getId(), theme);
 	}
 	@Test
@@ -216,7 +215,7 @@ class SemitDiplomnicApplicationTests {
 		Student student = studentService.getStudentById(1L);
 		Supervisor supervisor = supervisorService.getSupervisorById(1L);
 		Task task = taskService.getTaskById(1L);
-		Message message = new Message("Добрий день, а є приклади титульних аркушів?", LocalDateTime.now(), task, supervisor, student);
+		Message message = new Message("Добрий день, а є приклади титульних аркушів?", LocalDateTime.now(), true, supervisor, student, taskAssignmentService.getTaskAssignmentById(1L));
 		messageService.saveMessage(message);
 	}
 	@Test
@@ -224,7 +223,7 @@ class SemitDiplomnicApplicationTests {
 		Student student = studentService.getStudentById(1L);
 		Supervisor supervisor = supervisorService.getSupervisorById(1L);
 		Task task = taskService.getTaskById(1L);
-		Message message = new Message("Добрий день, у репозиторії НТУ ХПІ є прикладти титульних аркушів", LocalDateTime.now(), task, student, supervisor);
+		Message message = new Message("Добрий день, у репозиторії НТУ ХПІ є прикладти титульних аркушів", LocalDateTime.now(), false, supervisor, student,  taskAssignmentService.getTaskAssignmentById(1L));
 		messageService.saveMessage(message);
 	}
 }

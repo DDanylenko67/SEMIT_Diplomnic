@@ -39,6 +39,11 @@ public class UserServiceImpl implements UserService {
         this.supervisorRepository = supervisorRepository;
         this.studentGroupRepository = studentGroupRepository;
     }
+    @Override
+    public User updateUser(Long id, User user) {
+        user.setId(id);
+        return userRepository.save(user);
+    }
 
     @Override
     public void saveUserSupervisor(UserDto userDto) {

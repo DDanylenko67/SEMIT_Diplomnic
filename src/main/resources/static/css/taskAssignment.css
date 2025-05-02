@@ -156,6 +156,35 @@
 }
 .control-label{
     margin-top: 1rem;
+
     font-weight: 500;
     font-size: 18px;
+}
+.chat{
+    background-color: #e6f7ff;;
+    padding: 1rem;
+    margin: 1rem;
+    border-radius: 10px;
+    border: 2px solid #9F1C21;
+    min-height: 300px;
+    max-height: 300px;
+    overflow-y: auto;
+    visibility: hidden;
+}
+
+.message {
+    padding: 8px 12px;
+    border-radius: 20px;
+    border: 1px solid #9F1C21;
+    max-width: 70%;
+    word-wrap: break-word;
+}
+.sender {
+    background-color: cornsilk;
+}
+
+.receiver {
+    background-color: #fce4ec;
+    align-self: flex-start;
+    text-align: left;
 }

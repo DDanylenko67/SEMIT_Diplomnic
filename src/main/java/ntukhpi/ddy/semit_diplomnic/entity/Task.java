@@ -22,7 +22,7 @@ public class Task {
     private Long id;
     @Column(nullable = false, length = 50)
     private String title;
-    @Column(nullable = false, length = 150)
+    @Column(nullable = false, length = 500)
     private String description;
     @Column(nullable = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd")

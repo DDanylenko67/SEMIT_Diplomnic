@@ -2,6 +2,7 @@ package ntukhpi.ddy.semit_diplomnic.controllers;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import ntukhpi.ddy.semit_diplomnic.entity.Message;
 import ntukhpi.ddy.semit_diplomnic.entity.Student;
 import ntukhpi.ddy.semit_diplomnic.entity.TaskAssignment;
 import ntukhpi.ddy.semit_diplomnic.entity.User;
@@ -36,6 +37,7 @@ public class TaskAssignmentController {
     private final SupervisorService supervisorService;
     private final StudentGroupService studentGroupService;
     private final TaskAssignmentService taskAssignmentService;
+    private final MessageService messageService;
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     String minDate = LocalDate.now().plusDays(1).format(formatter);
     String maxDate = LocalDate.now().plusYears(1).format(formatter);
@@ -43,13 +45,14 @@ public class TaskAssignmentController {
 
     public TaskAssignmentController(final TaskService taskService, final StudentService studentService,
                           SupervisorService supervisorService, StudentGroupService studentGroupService,
-                          UserService userService, TaskAssignmentService taskAssignmentService) {
+                          UserService userService, TaskAssignmentService taskAssignmentService, MessageService messageService) {
         this.taskService = taskService;
         this.studentService = studentService;
         this.supervisorService = supervisorService;
         this.studentGroupService = studentGroupService;
         this.userService = userService;
         this.taskAssignmentService = taskAssignmentService;
+        this.messageService = messageService;
     }
     @GetMapping("/diplomnic/calendar/assignmentDate")
     public String diplomnicAssignmentDate(@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date, Model model){
@@ -70,10 +73,13 @@ public class TaskAssignmentController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        List<Message> messages = messageService.getMessagesByAssignment(taskAssignment);
+        model.addAttribute("messages", messages);
         model.addAttribute("count", fileCount);
         model.addAttribute("taskAssignment", taskAssignment);
         return "/diplomnic/assignment/taskAssignment";
     }
+
 
     @PostMapping("/diplomnic/saveTaskAssignment/{id}")
     public String saveTaskAssignment(@RequestParam("file") MultipartFile[] files, Model model, @PathVariable Long id){

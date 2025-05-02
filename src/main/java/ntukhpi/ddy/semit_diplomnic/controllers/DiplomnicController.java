@@ -1,5 +1,6 @@
 package ntukhpi.ddy.semit_diplomnic.controllers;
 
+import jakarta.servlet.http.HttpServletRequest;
 import ntukhpi.ddy.semit_diplomnic.entity.*;
 import ntukhpi.ddy.semit_diplomnic.enums.status.status;
 import ntukhpi.ddy.semit_diplomnic.repository.UserRepository;
@@ -12,6 +13,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
@@ -59,30 +62,44 @@ public class DiplomnicController {
 
     @GetMapping("/information")
     public String information(Model model){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getAuthorities().stream()
-                .anyMatch(authority -> authority.getAuthority().equals("ROLE_STUDENT"))) {
-            Student student = studentService.getStudentByEmail(getCurrentUser().getLogin());
-            String themeUA = "";
-            String themeENG = "";
-            Theme theme = new Theme();
-            if(student.getTheme() != null){
-                if(student.getTheme().getThemeNameENG() != null){
-                    themeENG = student.getTheme().getThemeNameENG();
-                    theme.setThemeNameENG(themeENG);
-                }
-                themeUA = student.getTheme().getThemeNameUA();
-                theme.setStatus(student.getTheme().getStatus());
-                theme.setThemeNameUA(themeUA);
-            }
-            model.addAttribute("themeUA", themeUA);
-            model.addAttribute("themeENG", themeENG);
-            model.addAttribute("student", student);
-        }
-        else {
-            model.addAttribute("supervisor", supervisorService.findSupervisorByEmail(getCurrentUser().getLogin()));
-        }
+        addAuthToModel(model);
         return "/diplomnic/information";
+    }
+    @GetMapping("/diplomnic/editInformation")
+    public String editInformation(Model model){
+        addAuthToModel(model);
+        return "/diplomnic/editInformation";
+    }
+
+    @PostMapping("/diplomnic/saveEditedInformation")
+    public String saveEditedSupervisor(HttpServletRequest request, @ModelAttribute("supervisor") Supervisor supervisorForm,
+                                       @ModelAttribute("student") Student studentForm){
+        String formType = request.getParameter("formType");
+        if ("supervisor".equals(formType)) {
+            Supervisor currentSupervisor = supervisorService.findSupervisorByEmail(getCurrentUser().getLogin());
+            currentSupervisor.setName(supervisorForm.getName());
+            if (!supervisorForm.getAcademicDegree().isEmpty() && supervisorForm.getAcademicDegree() != null) {
+                currentSupervisor.setAcademicDegree(supervisorForm.getAcademicDegree());
+            }
+            if(!supervisorForm.getAcademicRang().isEmpty() && supervisorForm.getAcademicRang() != null) {
+                currentSupervisor.setAcademicRang(supervisorForm.getAcademicRang());
+            }
+            User user = userService.findUserByEmail(currentSupervisor.getEmail());
+            user.setLogin(supervisorForm.getEmail());
+            userService.updateUser(user.getId(), user);
+            currentSupervisor.setEmail(supervisorForm.getEmail());
+            supervisorService.updateSupervisor(currentSupervisor.getId(), currentSupervisor);
+        }else {
+            Student currentStudent = studentService.getStudentByEmail(getCurrentUser().getLogin());
+            currentStudent.setName(studentForm.getName());
+            currentStudent.setUniversityGroup(studentForm.getUniversityGroup());
+            User user = userService.findUserByEmail(currentStudent.getEmail());
+            user.setLogin(studentForm.getEmail());
+            userService.updateUser(user.getId(), user);
+            currentStudent.setEmail(studentForm.getEmail());
+            studentService.updateStudent(currentStudent.getId(), currentStudent);
+        }
+        return "redirect:/diplomnic";
     }
 
     @GetMapping("/diplomnic/done")
@@ -179,6 +196,31 @@ public class DiplomnicController {
         return "/diplomnic/group/groupOfStudent";
     }
 
+    public void addAuthToModel(Model model){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(authority -> authority.getAuthority().equals("ROLE_STUDENT"))) {
+            Student student = studentService.getStudentByEmail(getCurrentUser().getLogin());
+            String themeUA = "";
+            String themeENG = "";
+            Theme theme = new Theme();
+            if(student.getTheme() != null){
+                if(student.getTheme().getThemeNameENG() != null){
+                    themeENG = student.getTheme().getThemeNameENG();
+                    theme.setThemeNameENG(themeENG);
+                }
+                themeUA = student.getTheme().getThemeNameUA();
+                theme.setStatus(student.getTheme().getStatus());
+                theme.setThemeNameUA(themeUA);
+            }
+            model.addAttribute("themeUA", themeUA);
+            model.addAttribute("themeENG", themeENG);
+            model.addAttribute("student", student);
+        }
+        else {
+            model.addAttribute("supervisor", supervisorService.findSupervisorByEmail(getCurrentUser().getLogin()));
+        }
+    }
     public void addTasks(List<TaskAssignment> taskAssignments, LocalDate date, Model model) {
         List<TaskAssignment> assignmentList = new ArrayList<>();
         for(TaskAssignment assignment : taskAssignments) {

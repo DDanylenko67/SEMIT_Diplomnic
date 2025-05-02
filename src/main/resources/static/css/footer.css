@@ -103,12 +103,12 @@ img.background {
 }
 .lng__list{
     box-shadow: 0 0 4px rgba(0, 0, 0, .2);
-    background-color: #9F1C21;
+    background-color: white;
     border-radius: 10px;
 }
 .lng__list a{
     display: block;
-    color: white;
+    color: #9F1C21;
     padding: 10px 15px;
     width: 230px;
     text-decoration: none;

@@ -52,6 +52,9 @@
                 </div>
                 <div class="form-body">
                     <form th:action="@{/diplomnic/updateGroup}" enctype="multipart/form-data"  th:object="${group}" method="post">
+                        <div th:if="${params == 'exist'}">
+                            <div class="message error" >Ви вже групу створили з такою назвою</div>
+                        </div>
                         <div class="form-group mb-3">
                             <label class="control-label"> Назва групи</label>
                             <input

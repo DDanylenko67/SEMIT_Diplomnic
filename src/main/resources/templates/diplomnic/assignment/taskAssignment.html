@@ -21,35 +21,71 @@
     <div class="card">
       <div class="card-left-container">
         <div class="center-card">
+          <input type="hidden" th:value="${taskAssignment.id}" id="taskAssignment_id" name="taskAssignment">
           <div th:if="${#authorization.expression('hasRole(''ROLE_STUDENT'')')}">
-            <div>
-              <p>Здати завдання</p>
+            <form th:action="@{/diplomnic/saveTaskAssignment/{id} (id=${taskAssignment.id})} " enctype="multipart/form-data"  method="post"  style="padding-left: 1rem">
+              <div>
+                <p>Здати завдання</p>
+              </div>
+              <div class="status-font">
+                <p  th:text="'Статус завдання: ' + ${taskAssignment.getStatus().getDisplayName()}"></p>
+              </div>
+              <div>
+                <input type="file" name="file" class="file-input" multiple >
+              </div>
+              <div th:if="${taskAssignment.getStatus().getDisplayName() == 'перевіряється'
+              || taskAssignment.getStatus().getDisplayName() == 'зроблено'}">
+                <button type="submit" class="submit-button">Здати завдання ще раз</button>
+              </div>
+              <div th:unless="${taskAssignment.getStatus().getDisplayName() == 'перевіряється'
+              || taskAssignment.getStatus().getDisplayName() == 'зроблено'
+              }" >
+                <button type="submit" class="submit-button">Здати завдання</button>
+              </div>
+            </form>
+            <div class="line-container">
+              <div class="card-line">
+              </div>
             </div>
-            <div class="status-font">
-              <p  th:text="'Статус завдання: ' + ${taskAssignment.getStatus().getDisplayName()}"></p>
+            <div class="center-card">
+              <p>Коментарі до завдання</p>
             </div>
-            <div>
-              <input type="file" name="file" class="file-input" multiple >
+            <div class="center-card" style="position: relative; display: flex; align-items: center; width: 100%;">
+              <input id="messageInput"
+                     class="send-input"
+                     type="text"
+                     placeholder="Уведіть повідомлення"
+                     spellcheck="false"
+                     autocomplete="off"
+                     style="flex: 1; padding-right: 40px; height: 40px; border-radius: 20px; border: 2px solid #9F1C21;">
+
+              <button id="sendButtonStudent"
+                      style="position: absolute; right: 10px; background: none; border: none; cursor: pointer;" >
+                <img src="/images/plane.png" alt="Send" style="width: 24px; height: 24px;">
+              </button>
             </div>
-            <div th:if="${taskAssignment.getStatus().getDisplayName() == 'перевіряється'
-            || taskAssignment.getStatus().getDisplayName() == 'зроблено'}">
-              <button type="submit" class="submit-button">Здати завдання ще раз</button>
+            <div th:if="${messages.isEmpty()}">
+              <div>
+                <p>Ще не має жодного коментаря</p>
+              </div>
             </div>
-            <div th:unless="${taskAssignment.getStatus().getDisplayName() == 'перевіряється'
-            || taskAssignment.getStatus().getDisplayName() == 'зроблено'
-            }" >
-              <button type="submit" class="submit-button">Здати завдання</button>
+            <div class="chat" th:unless="${messages.isEmpty()}" style="visibility: visible;">
+              <div  th:each="message : ${messages}">
+                <div th:class="${message.isStudentSender()} ? 'message sender' : 'message receiver'">
+                  <div th:text="${message.getText()}"></div>
+                </div>
+              </div>
             </div>
           </div>
 
           <div th:if="${#authorization.expression('hasRole(''ROLE_SUPERVISOR'')')}">
-            <div>
+            <div style="padding-left: 1rem">
               <p>Перевірка завдання</p>
             </div>
-            <div class="status-font">
+            <div class="status-font" style="padding-left: 1rem">
               <p  th:text="'Виконано: ' + ${taskAssignment.getStudent().getName()}"></p>
             </div>
-            <div class="radio-buttons">
+            <div class="radio-buttons" style="padding-left: 1rem">
               <label class="control-label"> Статус завдання</label>
               <label><input name="radio" type="radio" value="checking"
                             th:checked="${taskAssignment.getStatus().getDisplayName() == 'перевіряється'}"
@@ -61,36 +97,56 @@
                             th:checked="${taskAssignment.getStatus().getDisplayName() == 'зараховано'}"
                             th:attr="onclick='updateStatus(' + ${taskAssignment.id} + ', \'' + 'done' + '\')'"> Зарахувати</label>
             </div>
-            <div th:if="${count == 0}">
+            <div th:if="${count == 0}" style="padding-left: 1rem">
               <p>Жодного файлу не було додано</p>
             </div>
-            <div th:if="${count == 1}">
+            <div th:if="${count == 1}" style="padding-left: 1rem">
               <p th:text="'Наявний ' + ${count} + ' файл'"></p>
             </div>
-            <div th:if="${count == 2 || count == 3 || count == 4}">
+            <div th:if="${count == 2 || count == 3 || count == 4}" style="padding-left: 1rem">
               <p th:text="'Наявні ' + ${count} + ' файли'"></p>
             </div>
-            <div th:if="${count > 4 }">
+            <div th:if="${count > 4 }" style="padding-left: 1rem">
               <p th:text="'Наявні ' +  ${count} + ' файлів'"></p>
             </div>
-            <div th:if="${count != 0}">
+            <div th:if="${count != 0}" style="padding-left: 1rem">
               <button  class="submit-button"
                       th:attr="onclick='downloadZip(' + ${taskAssignment.id} + ')'">Завантажити файли</button>
             </div>
-          </div>
-          <div class="line-container">
-            <div class="card-line">
+            <div class="line-container">
+              <div class="card-line">
+              </div>
+            </div>
+            <div class="center-card">
+              <p>Коментарі до завдання</p>
+            </div>
+            <div class="center-card" style="position: relative; display: flex; align-items: center; width: 100%;">
+              <input id="messageSupervisorInput"
+                     class="send-input"
+                     type="text"
+                     placeholder="Уведіть повідомлення"
+                     spellcheck="false"
+                     autocomplete="off"
+                     style="flex: 1; padding-right: 40px; height: 40px; border-radius: 20px; border: 2px solid #9F1C21;">
+
+              <button id="sendButtonSupervisor"
+                      style="position: absolute; right: 10px; background: none; border: none; cursor: pointer;" >
+                <img src="/images/plane.png" alt="Send" style="width: 24px; height: 24px;">
+              </button>
+            </div>
+            <div th:if="${messages.isEmpty()}">
+              <div>
+                <p>Ще не має жодного коментаря</p>
+              </div>
+            </div>
+            <div class="chat" th:unless="${messages.isEmpty()}" style="visibility: visible;">
+              <div  th:each="message : ${messages}">
+                <div th:class="${message.isStudentSender()} ? 'message receiver' : 'message sender'">
+                  <div th:text="${message.getText()}"></div>
+                </div>
+              </div>
             </div>
           </div>
-          <div>
-            <p>Коментарі до завдання</p>
-          </div>
-        </div>
-        <div class="center-card">
-          <input  class="send-input" type="text" placeholder="Уведіть повідомлення">
-          <link type="image/png" sizes="16x16" rel="icon" href="/images/plane.png">
-        </div>
-        <div class="chat">
         </div>
       </div>
       <div class="card-right-container">
@@ -135,6 +191,71 @@
 <script>
   function downloadZip(taskAssignmentId) {
     window.location.href = "/files/download-all/" + taskAssignmentId;
+  }
+</script>
+<script>
+  document.getElementById("sendButtonSupervisor").addEventListener("click", function (event) {
+    event.preventDefault();
+    const messageText = document.getElementById("messageSupervisorInput").value.trim();
+    if (messageText === "") {
+      alert("Введіть повідомлення.");
+      return;
+    }
+    sendMessage(taskAssignmentId, messageText, false);
+  });
+</script>
+<script>
+  const taskAssignmentId = document.getElementById("taskAssignment_id").value;
+
+  document.getElementById("sendButtonStudent").addEventListener("click", function (event) {
+    event.preventDefault();
+    const messageText = document.getElementById("messageInput").value.trim();
+    if (messageText === "") {
+      alert("Введіть повідомлення.");
+      return;
+    }
+    sendMessage(taskAssignmentId, messageText, true);
+  });
+
+  function sendMessage(taskAssignmentId, messageText, isStudentSender) {
+    fetch("/diplomnic/sendMessage", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        taskAssignmentId,
+        messageText,
+        isStudentSender
+      })
+    })
+            .then(response => {
+              if (response.ok) {
+                if (isStudentSender) {
+                  document.getElementById("messageInput").value = "";
+                } else {
+                  document.getElementById("messageSupervisorInput").value = "";
+                }
+
+                const chatDiv = document.querySelector(".chat");
+
+                const messageDiv = document.createElement("div");
+                messageDiv.className = "message sender";
+
+                const textDiv = document.createElement("div");
+                textDiv.textContent = messageText;
+
+                messageDiv.appendChild(textDiv);
+                chatDiv.appendChild(messageDiv);
+                chatDiv.scrollTop = chatDiv.scrollHeight;
+              } else {
+                alert("Не вдалося надіслати повідомлення.");
+              }
+            })
+            .catch(error => {
+              console.error("Помилка:", error);
+              alert("Сталася помилка при надсиланні.");
+            });
   }
 </script>
 <script>

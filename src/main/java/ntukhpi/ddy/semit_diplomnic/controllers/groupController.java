@@ -163,18 +163,22 @@ public class groupController {
 
 
     @PostMapping("/diplomnic/updateGroup")
-    public String updateOldGroup(@ModelAttribute StudentGroup group,
-                                 @RequestParam("file") MultipartFile file,
-                                 @RequestParam Long id,
-                                 @ModelAttribute("group") StudentGroup groupToSave, Model model) {
+    public String updateOldGroup(@RequestParam Long id,
+                                 @ModelAttribute("group") StudentGroup groupToSave,
+                                 Model model) {
         Supervisor supervisor = supervisorService.findSupervisorByEmail(getCurrentUser().getLogin());
+        StudentGroup existingGroup = studentGroupService.getStudentGroupByName(groupToSave.getGroupName(), supervisor);
+        if (existingGroup != null && !existingGroup.getId().equals(id)) {
+            model.addAttribute("group", studentGroupService.getStudentGroupById(id));
+            model.addAttribute("params", "exist");
+            return "/diplomnic/updateGroup";
+        }
+
         StudentGroup studentGroup = studentGroupService.getStudentGroupById(id);
         studentGroup.setGroupName(groupToSave.getGroupName());
         studentGroup.setGroupType(groupToSave.getGroupType());
         studentGroupService.updateStudentGroup(id, studentGroup);
-        if(!file.isEmpty()){
-            readExcel(file, supervisor, studentGroup);
-        }
+
         return "redirect:/diplomnic";
     }
     @PostMapping("/diplomnic/saveGroup")
@@ -185,7 +189,13 @@ public class groupController {
         Supervisor supervisor = supervisorService.findSupervisorByEmail(getCurrentUser().getLogin());
         groupToSave.setSupervisor(supervisor);
         groupToSave.setCode(generateSecureRandomCode(10));
-        studentGroupService.saveStudentGroup(groupToSave);
+        if(studentGroupService.getStudentGroupByName(groupToSave.getGroupName(), supervisor) == null){
+            studentGroupService.saveStudentGroup(groupToSave);
+        }else{
+            model.addAttribute("group", groupToSave);
+            model.addAttribute("params", "exist");
+            return "/diplomnic/createGroup";
+        }
         if(!file.isEmpty()){
             readExcel(file, supervisor, groupToSave);
         }

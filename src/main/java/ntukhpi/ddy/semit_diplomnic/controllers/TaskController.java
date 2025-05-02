@@ -35,6 +35,8 @@ public class TaskController {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     String minDate = LocalDate.now().plusDays(1).format(formatter);
     String maxDate = LocalDate.now().plusYears(1).format(formatter);
+    private static final String UPLOAD_DIR = "uploads/";
+
 
 
     public TaskController(final TaskService taskService, final StudentService studentService,
@@ -88,15 +90,16 @@ public class TaskController {
         return "redirect:/diplomnic";
     }
     @GetMapping("/deleteTask/{id}")
-    public String deleteTask(@PathVariable Long id, @RequestParam("group_id") Long groupId, Model model){
+    public String deleteTask(@PathVariable Long id, Model model){
         Task task = taskService.getTaskById(id);
-        deleteAssignments(task);
-        deleteGroups(task);
-        task.getAssignments().clear();
-        task.getStudentGroups().clear();
+        List<StudentGroup> originalGroups = new ArrayList<>(task.getStudentGroups());
+        for (StudentGroup group : originalGroups) {
+            deleteAssignments(task, group);
+            deleteStudentGroup(task, group);
+        }
         taskService.updateTask(task.getId(), task);
         taskService.deleteTaskById(task.getId());
-        return  "redirect:/groupTasks/" + groupId;
+        return  "redirect:/diplomnic";
     }
     @PostMapping("/updateSavedTask/{id}")
     public String updateSavedTask(@PathVariable Long id,
@@ -110,34 +113,36 @@ public class TaskController {
         taskDB.setDescription(taskToSave.getDescription());
         taskDB.setTitle(taskToSave.getTitle());
         List<StudentGroup> groups = new ArrayList<>();
-        if (selectedBachelors != null) {
+        if (selectedBachelors != null && !selectedBachelors.isEmpty()) {
             for (Long selectedGroup : selectedBachelors) {
                 groups.add(studentGroupService.getStudentGroupById(selectedGroup));
             }
         }
-        if(selectedMasters != null){
+        if(selectedMasters != null && !selectedMasters.isEmpty()){
             for (Long selectedGroup : selectedMasters) {
                 groups.add(studentGroupService.getStudentGroupById(selectedGroup));
             }
         }
-        if(groups.isEmpty()){
-            return "redirect:/deleteTask/"+taskDB.getId();
-        }
-        if(!taskDB.getStudentGroups().equals(groups)){
-            for (StudentGroup group : taskDB.getStudentGroups()) {
-                if(!groups.contains(group)){
+
+        if (!taskDB.getStudentGroups().equals(groups)) {
+            List<StudentGroup> originalGroups = new ArrayList<>(taskDB.getStudentGroups());
+            for (StudentGroup group : originalGroups) {
+                if (!groups.contains(group)) {
                     deleteAssignments(taskDB, group);
                     deleteStudentGroup(taskDB, group);
                 }
             }
-            for (StudentGroup group : groups) {
-                if(!taskDB.getStudentGroups().contains(group)){
-                    addAssignments(group, taskDB);
+            if (!groups.isEmpty()) {
+                for (StudentGroup group : groups) {
+                    if (!taskDB.getStudentGroups().contains(group)) {
+                        taskDB.getStudentGroups().add(group);
+                        addAssignments(group, taskDB);
+                    }
                 }
             }
         }
-        if(groupId == 0){
-            return "redirect: /diplomnic";
+        if(groupId != null && groupId == 0){
+            return "redirect:/diplomnic";
         }
         return  "redirect:/groupTasks/" + groupId;
     }
@@ -161,26 +166,16 @@ public class TaskController {
 
                 for (TaskAssignment assignment : assignmentsToRemove) {
                     student.getAssignments().remove(assignment);
+                    String directoryPath = UPLOAD_DIR + "/" + assignment.getStudent().getEmail() + "/assignment" + assignment.getId();
+                    String archivePath = UPLOAD_DIR + "/" + assignment.getStudent().getEmail();
+                    FolderDeleter.deleteFolder(directoryPath);
+                    FolderDeleter.deleteFolder(archivePath);
                     task.getAssignments().remove(assignment);
                     studentService.updateStudent(student.getId(), student);
                     taskService.updateTask(task.getId(), task);
                     taskAssignmentService.deleteTaskAssignmentById(assignment.getId());
                 }
             }
-        }
-    }
-    public void deleteAssignments(Task task){
-        List<TaskAssignment> assignments = new ArrayList<>(task.getAssignments());
-        for (TaskAssignment assignment : assignments) {
-            TaskAssignment managedAssignment = taskAssignmentService.getTaskAssignmentById(assignment.getId());
-            taskAssignmentService.deleteTaskAssignmentById(managedAssignment.getId());
-        }
-    }
-    public void deleteGroups(Task task){
-        List<StudentGroup> groupsCopy = new ArrayList<>(task.getStudentGroups());
-        for (StudentGroup gr : groupsCopy) {
-            gr.getTasks().remove(task);
-            studentGroupService.updateStudentGroup(gr.getId(), gr);
         }
     }
 

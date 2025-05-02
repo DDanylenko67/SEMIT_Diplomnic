@@ -43,6 +43,18 @@ public class TaskAssignmentRestController {
         this.studentService = studentService;
         this.taskAssignmentService = taskAssignmentService;
     }
+    @GetMapping("/sendMessage")
+    public ResponseEntity<String> sendMessage(
+            @RequestParam Long taskAssignmentId,
+            @RequestParam String messageText,
+            @RequestParam boolean isStudentSender) {
+
+        System.out.println("ID: " + taskAssignmentId);
+        System.out.println("Text: " + messageText);
+        System.out.println("isStudentSender: " + isStudentSender);
+
+        return ResponseEntity.ok("Повідомлення надіслано");
+    }
     @GetMapping("/files/download-all/{taskAssignmentId}")
     public ResponseEntity<Resource> downloadAllFiles(@PathVariable Long taskAssignmentId) {
         TaskAssignment taskAssignment = taskAssignmentService.getTaskAssignmentById(taskAssignmentId);

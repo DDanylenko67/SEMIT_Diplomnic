@@ -19,8 +19,6 @@ public class Theme {
     private String themeNameUA;
     @Column(length = 250)
     private String themeNameENG;
-    @Column
-    private String comment;
     @Enumerated(EnumType.STRING)
     @Column(name = "themeStatus")
     @Convert(converter = statusConverter.class)
@@ -62,9 +60,6 @@ public class Theme {
         return themeNameENG;
     }
 
-    public String getComment() {
-        return comment;
-    }
 
     public ntukhpi.ddy.semit_diplomnic.enums.status.status getStatus() {
         return status;
@@ -88,10 +83,6 @@ public class Theme {
 
     public void setThemeNameENG(String themeNameENG) {
         this.themeNameENG = themeNameENG;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
     }
 
     public void setStatus(ntukhpi.ddy.semit_diplomnic.enums.status.status status) {

@@ -28,9 +28,13 @@ public class springSecurity {
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                         .requestMatchers("/diplomnic/signUp", "/diplomnic/signUp/**", "/register/**", "/login/**").permitAll()
+                        .requestMatchers("/diplomnic/sendMessage").permitAll()
                         .anyRequest().authenticated()
-                )
 
+                )
+                .csrf()
+                    .ignoringRequestMatchers("/diplomnic/sendMessage") // игнорировать CSRF для определенных запросов
+                .and()
                 .formLogin(
                         form -> form
                                 .loginPage("/login")

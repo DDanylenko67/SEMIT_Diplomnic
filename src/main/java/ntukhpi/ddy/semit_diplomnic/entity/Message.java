@@ -16,6 +16,7 @@ public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false)
     private String text;
 
@@ -23,45 +24,34 @@ public class Message {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime timestamp;
 
-    @ManyToOne
-    @JoinColumn(name = "task_id")
-    private Task task;
+    @Column(nullable = false)
+    private boolean isStudentSender;
 
     @ManyToOne
     @JoinColumn(name = "supervisor_id")
-    private Supervisor supervisorSender;
+    private Supervisor supervisor;
 
     @ManyToOne
     @JoinColumn(name = "student_id")
-    private Student studentSender;
+    private Student student;
 
     @ManyToOne
-    @JoinColumn(name = "supervisor_receiver_id")
-    private Supervisor supervisorReceiver;
-
-    @ManyToOne
-    @JoinColumn(name = "student_receiver_id")
-    private Student studentReceiver;
+    @JoinColumn(name = "assignment_id")
+    private TaskAssignment assignment;
 
     public Message(){
 
     }
 
-    public Message(String text, LocalDateTime timestamp, Task task, Supervisor supervisorSender, Student studentReceiver) {
+    public Message(String text, LocalDateTime timestamp, boolean isStudentSender, Supervisor supervisor, Student student, TaskAssignment assignment) {
         this.text = text;
         this.timestamp = timestamp;
-        this.task = task;
-        this.supervisorSender = supervisorSender;
-        this.studentReceiver = studentReceiver;
+        this.isStudentSender = isStudentSender;
+        this.student = student;
+        this.supervisor = supervisor;
+        this.assignment = assignment;
     }
 
-    public Message(String text, LocalDateTime timestamp, Task task, Student studentSender, Supervisor supervisorReceiver) {
-        this.text = text;
-        this.timestamp = timestamp;
-        this.task = task;
-        this.studentSender = studentSender;
-        this.supervisorReceiver = supervisorReceiver;
-    }
 
     public Long getId() {
         return id;
@@ -75,25 +65,22 @@ public class Message {
         return timestamp;
     }
 
-    public Task getTask() {
-        return task;
+    public boolean isStudentSender() {
+        return isStudentSender;
     }
 
-    public Supervisor getSupervisorSender() {
-        return supervisorSender;
+    public Supervisor getSupervisor() {
+        return supervisor;
     }
 
-    public Student getStudentSender() {
-        return studentSender;
+    public Student getStudent() {
+        return student;
     }
 
-    public Supervisor getSupervisorReceiver() {
-        return supervisorReceiver;
+    public TaskAssignment getAssignment() {
+        return assignment;
     }
 
-    public Student getStudentReceiver() {
-        return studentReceiver;
-    }
 
     public void setId(Long id) {
         this.id = id;
@@ -107,23 +94,20 @@ public class Message {
         this.timestamp = timestamp;
     }
 
-    public void setTask(Task task) {
-        this.task = task;
+
+    public void setSupervisor(Supervisor supervisor) {
+        this.supervisor = supervisor;
     }
 
-    public void setSupervisorSender(Supervisor supervisorSender) {
-        this.supervisorSender = supervisorSender;
+    public void setStudent(Student student) {
+        this.student = student;
     }
 
-    public void setStudentSender(Student studentSender) {
-        this.studentSender = studentSender;
+    public void setAssignment(TaskAssignment assignment) {
+        this.assignment = assignment;
     }
 
-    public void setSupervisorReceiver(Supervisor supervisorReceiver) {
-        this.supervisorReceiver = supervisorReceiver;
-    }
-
-    public void setStudentReceiver(Student studentReceiver) {
-        this.studentReceiver = studentReceiver;
+    public void setStudentSender(boolean studentSender) {
+        isStudentSender = studentSender;
     }
 }

@@ -10,4 +10,5 @@ public interface UserService {
     void saveUserStudent(UserDto userDto);
     User findUserByEmail(String email);
     List<UserDto> findAllUsers();
+    public User updateUser(Long id, User user);
 }
