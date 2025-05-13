@@ -3,23 +3,28 @@ package ntukhpi.ddy.semit_diplomnic.controllers;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import ntukhpi.ddy.semit_diplomnic.entity.*;
+import ntukhpi.ddy.semit_diplomnic.entity.tools.FolderDeleter;
 import ntukhpi.ddy.semit_diplomnic.enums.groupType.groupType;
 import ntukhpi.ddy.semit_diplomnic.enums.status.status;
 import ntukhpi.ddy.semit_diplomnic.service.*;
-import org.hibernate.sql.ast.tree.update.Assignment;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 @Controller
@@ -49,7 +54,7 @@ public class TaskController {
         this.userService = userService;
         this.taskAssignmentService = taskAssignmentService;
     }
-    @GetMapping("/createTask")
+    @GetMapping("/diplomnic/supervisor/createTask")
     public String createTask(Model model) {
         addAttribute(model);
         Task task = new Task();
@@ -57,7 +62,7 @@ public class TaskController {
         return "/diplomnic/createTask";
     }
 
-    @GetMapping("/updateTask/{id}")
+    @GetMapping("/diplomnic/supervisor/updateTask/{id}")
     public String updateTask(@PathVariable Long id,@RequestParam("group_id") Long groupId, Model model) {
         Task task  = taskService.getTaskById(id);
         addAttribute(model);
@@ -66,7 +71,7 @@ public class TaskController {
         model.addAttribute("groupId", groupId);
         return "/diplomnic/group/updateTask";
     }
-    @PostMapping("/saveTask")
+    @PostMapping("/diplomnic/supervisor/saveTask")
     public String saveTask(
             @ModelAttribute("task") Task taskToSave,
             @RequestParam(required = false) List<Long> selectedBachelors,
@@ -89,7 +94,7 @@ public class TaskController {
         }
         return "redirect:/diplomnic";
     }
-    @GetMapping("/deleteTask/{id}")
+    @GetMapping("/diplomnic/supervisor/deleteTask/{id}")
     public String deleteTask(@PathVariable Long id, Model model){
         Task task = taskService.getTaskById(id);
         List<StudentGroup> originalGroups = new ArrayList<>(task.getStudentGroups());
@@ -101,7 +106,7 @@ public class TaskController {
         taskService.deleteTaskById(task.getId());
         return  "redirect:/diplomnic";
     }
-    @PostMapping("/updateSavedTask/{id}")
+    @PostMapping("/diplomnic/supervisor/updateSavedTask/{id}")
     public String updateSavedTask(@PathVariable Long id,
                              @ModelAttribute("task") Task taskToSave,
                              @RequestParam(required = false) List<Long> selectedBachelors,
@@ -144,8 +149,112 @@ public class TaskController {
         if(groupId != null && groupId == 0){
             return "redirect:/diplomnic";
         }
-        return  "redirect:/groupTasks/" + groupId;
+        return  "redirect:/diplomnic/supervisor/groupTasks/" + groupId;
     }
+
+
+    @PostMapping("/diplomnic/supervisor/saveTasksFromFiles")
+    @ResponseBody
+    public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file,
+                                                   @RequestParam(value = "selectedBachelors", required = false) List<Long> selectedBachelors,
+                                                   @RequestParam(value = "selectedMasters", required = false) List<Long> selectedMasters) {
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("Файл порожній");
+        }
+        List<StudentGroup> lisfOfGroups = new ArrayList<>();
+        if(selectedBachelors != null && !selectedBachelors.isEmpty()){
+            for (Long selectedGroup : selectedBachelors) {
+                lisfOfGroups.add(studentGroupService.getStudentGroupById(selectedGroup));
+            }
+        }
+        if(selectedMasters != null && !selectedMasters.isEmpty()){
+            for (Long selectedGroup : selectedMasters) {
+                lisfOfGroups.add(studentGroupService.getStudentGroupById(selectedGroup));
+            }
+        }
+        Supervisor supervisor = supervisorService.findSupervisorByEmail(getCurrentUser().getLogin());
+        String filename = file.getOriginalFilename();
+        try (InputStream fis = file.getInputStream();
+             XWPFDocument document = new XWPFDocument(fis)) {
+
+            List<XWPFTable> tables = document.getTables();
+            for (XWPFTable table : tables) {
+                String headerText = table.getRows().get(0).getTableCells().get(0).getText().toLowerCase().trim();
+                if (headerText.equals("назва етапа") || headerText.equals("назва етапу")) {
+                    for (XWPFTableRow row : table.getRows()) {
+                        String rowText =  row.getTableCells().get(0).getText().toLowerCase().trim();
+                        if (row.getTableCells().size() == 3 &&
+                                !rowText.equals("назва етапа") &&
+                                !rowText.equals("назва етапу")) {
+                            StringBuilder title = new StringBuilder();
+                            List<XWPFParagraph> paragraphs = row.getTableCells().get(0).getParagraphs();
+                            for (XWPFParagraph paragraph : paragraphs) {
+                                title.append(paragraph.getText());
+                                title.append("\t");
+                            }
+                            LocalDate dateOfTask = readDate(row.getTableCells().get(1).getText());
+                            StringBuilder description = new StringBuilder();
+                            paragraphs = row.getTableCells().get(1).getParagraphs();
+                            for (XWPFParagraph paragraph : paragraphs) {
+                                description.append(paragraph.getText());
+                                description.append(" ");
+                            }
+                            description.append("\n");
+                            paragraphs = row.getTableCells().get(2).getParagraphs();
+                            for (XWPFParagraph paragraph : paragraphs) {
+                                description.append(paragraph.getText());
+                                description.append("\n");
+                            }
+                            if(dateOfTask != null){
+                                Task task = new Task();
+                                task.setDeadline(dateOfTask);
+                                task.setTitle(title.toString());
+                                task.setDescription(description.toString());
+                                task.setSupervisor(supervisor);
+                                task.setDateOfCreate(LocalDate.now());
+                                taskService.saveTask(task);
+                                if (selectedBachelors != null ) {
+                                    for (Long selectedGroup : selectedBachelors) {
+                                        addAssignments(studentGroupService.getStudentGroupById(selectedGroup), task);
+                                    }
+                                }
+                                if(selectedMasters != null){
+                                    for (Long selectedGroup : selectedMasters) {
+                                        addAssignments(studentGroupService.getStudentGroupById(selectedGroup), task);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return ResponseEntity.ok("Файл успішно завантажено: " + filename);
+    }
+
+    public LocalDate readDate(String date) {
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        date = date.trim().toLowerCase().replace("\n", " ");
+
+        LocalDate fromDate = null;
+
+        if (date.contains("з") && (date.contains("до") || date.contains("по"))) {
+            String[] parts = date.split("з|до|по");
+            if (parts.length >= 2) {
+                fromDate = LocalDate.parse(parts[1].trim(), inputFormatter);
+            }
+        } else if (date.contains("з")) {
+            fromDate = LocalDate.parse(date.replace("з", "").trim(), inputFormatter);
+        } else if (date.contains("до") || date.contains("по")) {
+            fromDate = LocalDate.parse(date.replace("до", "").replace("по", "").trim(), inputFormatter);
+        }
+
+        return fromDate;
+    }
+
 
     public void deleteStudentGroup(Task task, StudentGroup studentGroup){
         task.getStudentGroups().remove(studentGroup);

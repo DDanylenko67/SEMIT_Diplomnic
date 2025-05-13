@@ -18,18 +18,18 @@
             </a>
             <div th:if="${#authorization.expression('hasRole(''ROLE_SUPERVISOR'')')}" class="d-flex gap-3">
                 <div class="borders">
-                    <a href="/createGroup"  class="link-text">Створити нову групу</a>
+                    <a href="/diplomnic/supervisor/createGroup"  class="link-text">Створити нову групу</a>
                 </div>
                 <div>
-                    <a href="/suggestedThemes"  class="link-text">Запропоновані теми</a>
+                    <a href="/diplomnic/supervisor/suggestedThemes"  class="link-text">Запропоновані теми</a>
                 </div>
                 <div class="lng borders">
                     <a href="#" class="lng__link">Завдання</a>
                     <div class="lng__list_wrapper">
                         <div class="lng__list">
-                            <a href="/diplomnic/listOfTask" >Список завдань</a>
-                            <a href="/checkTask">Перевірити завдання</a>
-                            <a href="/createTask">Додати нове завдання</a>
+                            <a href="/diplomnic/supervisor/listOfTask" >Список завдань</a>
+                            <a href="/diplomnic/supervisor/checkTask">Перевірити завдання</a>
+                            <a href="/diplomnic/supervisor/createTask">Додати нове завдання</a>
                         </div>
                     </div>
                 </div>
@@ -37,10 +37,13 @@
 
             <diV th:if="${#authorization.expression('hasRole(''ROLE_STUDENT'')')}" class="d-flex gap-5">
                 <div>
-                    <a href="/selectTheme"  class="link-text">Тема роботи</a>
+                    <a href="/diplomnic/student/selectTheme"  class="link-text borders">Тема роботи</a>
                 </div>
                 <div>
-                    <a href="/diplomnic/groupOfStudent"  class="link-text">Мої групи</a>
+                    <a href="/diplomnic/student/groupOfStudent"  class="link-text">Групи</a>
+                </div>
+                <div>
+                    <a href="/diplomnic"  class="link-text borders">Завдання</a>
                 </div>
             </diV>
             <div class="lng">
@@ -62,14 +65,14 @@
                         <div class="task-title">
                             <p>Нажаль, ви не маєте жодної групи</p>
                         </div>
-                        <form th:action="@{/createGroup}" class="update" >
+                        <form th:action="@{/diplomnic/supervisor/createGroup}" class="update" >
                             <button class="submit-button">Створити нову групу</button>
                         </form>
                     </div>
                     <div  th:unless="${#lists.isEmpty(groups)}" th:each="group : ${groups}" class="group-block">
                         <div class="head">
                             <p th:text="${group.getGroupName()}" class="left"></p>
-                            <form th:action="@{/groupInfo/{id} (id=${group.id})}" class="update" >
+                            <form th:action="@{/diplomnic/supervisor/groupInfo/{id} (id=${group.id})}" class="update" >
                                 <button class="non-button">Переглянути</button>
                             </form>
                         </div>
@@ -108,13 +111,13 @@
                         <form th:action="@{/diplomnic}"  >
                             <button th:class="${type == 'all'} ? 'diplomnic-submit-button' : 'diplomnic-home'">Усі</button>
                         </form>
-                        <form th:action="@{/diplomnic/inProgress}" >
+                        <form th:action="@{/diplomnic/student/inProgress}" >
                             <button th:class="${type == 'inProgress'} ? 'diplomnic-submit-button' : 'diplomnic-home'">Невиконанні </button>
                         </form>
-                        <form th:action="@{/diplomnic/done}">
+                        <form th:action="@{/diplomnic/student/done}">
                             <button th:class="${type == 'done'} ? 'diplomnic-submit-button' : 'diplomnic-home'">Виконанні </button>
                         </form>
-                        <form th:action="@{/diplomnic/pass}"  >
+                        <form th:action="@{/diplomnic/student/pass}"  >
                             <button th:class="${type == 'pass'} ? 'diplomnic-submit-button' : 'diplomnic-home'">Пропущений строк здачі</button>
                         </form>
                     </div>
@@ -197,7 +200,7 @@
     <script>
         document.getElementById("toggleSwitch").addEventListener("change", function() {
             if (this.checked) {
-                window.location.href = "/diplomnic/calendar";
+                window.location.href = "/diplomnic/student/calendar";
             } else {
                 window.location.href = "/diplomnic";
             }

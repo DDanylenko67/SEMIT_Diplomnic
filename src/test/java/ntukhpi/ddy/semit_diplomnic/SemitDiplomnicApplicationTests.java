@@ -1,6 +1,7 @@
 package ntukhpi.ddy.semit_diplomnic;
 
 import ntukhpi.ddy.semit_diplomnic.entity.*;
+import ntukhpi.ddy.semit_diplomnic.entity.tools.UserDto;
 import ntukhpi.ddy.semit_diplomnic.enums.groupType.groupType;
 import ntukhpi.ddy.semit_diplomnic.enums.status.status;
 import ntukhpi.ddy.semit_diplomnic.service.*;
@@ -12,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @SpringBootTest
@@ -42,9 +42,9 @@ class SemitDiplomnicApplicationTests {
 	}
 	@Test
 	void addStudentGroup() {
-		StudentGroup studentGroup = new StudentGroup("Бакалаври 2025", groupType.bachelor, supervisorService.getSupervisorById(1L), "1L4gl2qWOs");
+		StudentGroup studentGroup = new StudentGroup("Бакалаври 2025", groupType.bachelor, supervisorService.getSupervisorById(1L));
 		studentGroupService.saveStudentGroup(studentGroup);
-		StudentGroup studentGroup1 = new StudentGroup("Магістри-2025-2026", groupType.master, supervisorService.getSupervisorById(1L), "8aiml7nH7s");
+		StudentGroup studentGroup1 = new StudentGroup("Магістри-2025-2026", groupType.master, supervisorService.getSupervisorById(1L));
 		studentGroupService.saveStudentGroup(studentGroup1);
 	}
 

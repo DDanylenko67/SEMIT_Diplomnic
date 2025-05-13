@@ -2,12 +2,11 @@ package ntukhpi.ddy.semit_diplomnic.controllers;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import ntukhpi.ddy.semit_diplomnic.entity.Message;
-import ntukhpi.ddy.semit_diplomnic.entity.Student;
-import ntukhpi.ddy.semit_diplomnic.entity.TaskAssignment;
-import ntukhpi.ddy.semit_diplomnic.entity.User;
+import ntukhpi.ddy.semit_diplomnic.entity.*;
 import ntukhpi.ddy.semit_diplomnic.enums.status.status;
 import ntukhpi.ddy.semit_diplomnic.service.*;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xwpf.usermodel.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -17,7 +16,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.ResponseEntity;
+
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -54,7 +56,7 @@ public class TaskAssignmentController {
         this.taskAssignmentService = taskAssignmentService;
         this.messageService = messageService;
     }
-    @GetMapping("/diplomnic/calendar/assignmentDate")
+    @GetMapping("/diplomnic/student/calendar/assignmentDate")
     public String diplomnicAssignmentDate(@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date, Model model){
         Student student = studentService.getStudentByEmail(getCurrentUser().getLogin());
         addAssignments(student, date, model);
@@ -81,7 +83,7 @@ public class TaskAssignmentController {
     }
 
 
-    @PostMapping("/diplomnic/saveTaskAssignment/{id}")
+    @PostMapping("/diplomnic/student/saveTaskAssignment/{id}")
     public String saveTaskAssignment(@RequestParam("file") MultipartFile[] files, Model model, @PathVariable Long id){
         Student student = studentService.getStudentByEmail(getCurrentUser().getLogin());
         TaskAssignment taskAssignment = taskAssignmentService.getTaskAssignmentById(id);

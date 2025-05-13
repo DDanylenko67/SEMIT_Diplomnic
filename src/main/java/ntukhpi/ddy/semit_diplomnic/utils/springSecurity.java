@@ -28,12 +28,16 @@ public class springSecurity {
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                         .requestMatchers("/diplomnic/signUp", "/diplomnic/signUp/**", "/register/**", "/login/**").permitAll()
-                        .requestMatchers("/diplomnic/sendMessage").permitAll()
+                        .requestMatchers("/diplomnic/student/**").hasRole("STUDENT")
+                        .requestMatchers("/diplomnic/supervisor/**").hasRole("SUPERVISOR")
+                        .requestMatchers("/diplomnic", "/information", "/diplomnic/editInformation", "/diplomnic/saveEditedInformation",
+                                "/diplomnic/sendMessage", "logout", "/diplomnic/taskAssignment/**").authenticated()
                         .anyRequest().authenticated()
 
                 )
                 .csrf()
-                    .ignoringRequestMatchers("/diplomnic/sendMessage") // игнорировать CSRF для определенных запросов
+                    .ignoringRequestMatchers("/diplomnic/supervisor/saveTasksFromFiles")
+                    .ignoringRequestMatchers("/diplomnic/sendMessage")
                 .and()
                 .formLogin(
                         form -> form

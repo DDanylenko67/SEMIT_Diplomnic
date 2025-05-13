@@ -43,26 +43,14 @@ public class TaskAssignmentRestController {
         this.studentService = studentService;
         this.taskAssignmentService = taskAssignmentService;
     }
-    @GetMapping("/sendMessage")
-    public ResponseEntity<String> sendMessage(
-            @RequestParam Long taskAssignmentId,
-            @RequestParam String messageText,
-            @RequestParam boolean isStudentSender) {
-
-        System.out.println("ID: " + taskAssignmentId);
-        System.out.println("Text: " + messageText);
-        System.out.println("isStudentSender: " + isStudentSender);
-
-        return ResponseEntity.ok("Повідомлення надіслано");
-    }
-    @GetMapping("/files/download-all/{taskAssignmentId}")
+    @GetMapping("/diplomnic/supervisor/files/download-all/{taskAssignmentId}")
     public ResponseEntity<Resource> downloadAllFiles(@PathVariable Long taskAssignmentId) {
         TaskAssignment taskAssignment = taskAssignmentService.getTaskAssignmentById(taskAssignmentId);
         String archivePath = DIRECTORY + "/" + taskAssignment.getStudent().getEmail();
         String path = DIRECTORY + "/" + taskAssignment.getStudent().getEmail() + "/assignment" + taskAssignment.getId();
 
         try {
-            String zipFileName = taskAssignment.getStudent().getName() + " " + taskAssignment.getTask().getTitle() + ".zip";
+            String zipFileName = taskAssignment.getStudent().getName()  + ".zip";
             Path zipPath = Paths.get(archivePath, zipFileName);
             try (ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(zipPath.toFile()))) {
                 Files.list(Paths.get(path)).forEach(file -> {
@@ -93,7 +81,7 @@ public class TaskAssignmentRestController {
             return ResponseEntity.internalServerError().build();
         }
     }
-    @GetMapping("/tasks/update-status/{taskAssignmentId}/{statusFrom}")
+    @GetMapping("/diplomnic/supervisor/tasks/update-status/{taskAssignmentId}/{statusFrom}")
     @ResponseBody
     public ResponseEntity<String> updateTaskStatus(@PathVariable Long taskAssignmentId, @PathVariable String statusFrom) {
         TaskAssignment taskAssignment = taskAssignmentService.getTaskAssignmentById(taskAssignmentId);

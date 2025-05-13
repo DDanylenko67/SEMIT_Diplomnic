@@ -2,7 +2,7 @@ package ntukhpi.ddy.semit_diplomnic.controllers;
 
 import jakarta.validation.Valid;
 import ntukhpi.ddy.semit_diplomnic.entity.User;
-import ntukhpi.ddy.semit_diplomnic.entity.UserDto;
+import ntukhpi.ddy.semit_diplomnic.entity.tools.UserDto;
 import ntukhpi.ddy.semit_diplomnic.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

@@ -16,24 +16,17 @@
         <a class="navbar-brand" href="/diplomnic">
             <img src="/images/logo_red.jpg" alt="НТУ ХПІ" width="75px" height="75px">
         </a>
-        <div class="d-flex gap-3">
-            <div class="borders">
-                <a href="/createGroup"  class="link-text">Створити нову групу</a>
+        <diV class="d-flex gap-5">
+            <div>
+                <a href="/diplomnic/student/selectTheme"  class="link-text borders">Тема роботи</a>
             </div>
             <div>
-                <a href="/suggestedThemes"  class="link-text">Запропоновані теми</a>
+                <a href="/diplomnic/student/groupOfStudent"  class="link-text">Групи</a>
             </div>
-            <div class="lng borders">
-                <a href="#" class="lng__link">Завдання</a>
-                <div class="lng__list_wrapper">
-                    <div class="lng__list">
-                        <a href="/diplomnic/listOfTask" >Список завдань</a>
-                        <a href="/checkTask">Перевірити завдання</a>
-                        <a href="/createTask">Додати нове завдання</a>
-                    </div>
-                </div>
+            <div>
+                <a href="/diplomnic"  class="link-text borders">Завдання</a>
             </div>
-        </div>
+        </diV>
         <div class="lng">
             <a href="#" class="lng__link">Обліковий запис</a>
             <div class="lng__list_wrapper">
@@ -55,7 +48,6 @@
                 <div class="head">
                     <p th:text="${group.getGroupName()}" class="left"></p>
                     <p th:text="'Керівник: ' + ${group.getSupervisor().getName()}" class="left"></p>
-                    <button type="button" onclick="window.location.href='/diplomnic'" class="home" style="margin-bottom: 1rem; margin-top: 1rem">На головну</button>
                 </div>
                 <div th:each="student : ${group.getStudents()}">
                     <div class="tasks-block">

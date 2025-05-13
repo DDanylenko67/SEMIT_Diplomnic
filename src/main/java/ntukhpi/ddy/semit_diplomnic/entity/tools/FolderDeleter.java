@@ -1,4 +1,4 @@
-package ntukhpi.ddy.semit_diplomnic.entity;
+package ntukhpi.ddy.semit_diplomnic.entity.tools;
 
 import java.io.IOException;
 import java.nio.file.*;

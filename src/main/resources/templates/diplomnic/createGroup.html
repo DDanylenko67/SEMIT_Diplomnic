@@ -16,18 +16,18 @@
             </a>
             <div class="d-flex gap-3">
                 <div class="borders">
-                    <a href="/createGroup"  class="link-text">Створити нову групу</a>
+                    <a href="/diplomnic/supervisor/createGroup"  class="link-text">Створити нову групу</a>
                 </div>
                 <div>
-                    <a href="/suggestedThemes"  class="link-text">Запропоновані теми</a>
+                    <a href="/diplomnic/supervisor/suggestedThemes"  class="link-text">Запропоновані теми</a>
                 </div>
                 <div class="lng borders">
                     <a href="#" class="lng__link">Завдання</a>
                     <div class="lng__list_wrapper">
                         <div class="lng__list">
-                            <a href="/diplomnic/listOfTask" >Список завдань</a>
-                            <a href="/checkTask">Перевірити завдання</a>
-                            <a href="/createTask">Додати нове завдання</a>
+                            <a href="/diplomnic/supervisor/listOfTask" >Список завдань</a>
+                            <a href="/diplomnic/supervisor/checkTask">Перевірити завдання</a>
+                            <a href="/diplomnic/supervisor/createTask">Додати нове завдання</a>
                         </div>
                     </div>
                 </div>
@@ -41,7 +41,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </nav>
     <main>
@@ -52,7 +51,7 @@
                         <h5>Створення нової групи</h5>
                     </div>
                     <div class="form-body">
-                        <form th:action="@{/diplomnic/saveGroup}" enctype="multipart/form-data"  th:object="${group}" method="post">
+                        <form th:action="@{/diplomnic/supervisor/saveGroup}" enctype="multipart/form-data"  th:object="${group}" method="post">
                             <div th:if="${params == 'exist'}">
                                 <div class="message error" >Ви вже групу створили з такою назвою</div>
                             </div>
@@ -77,7 +76,7 @@
                             </div>
                             <div class="form-group mb-3">
                                 <label class="control-label">Завантажити список студентів</label>
-                                <input type="file" name="file" id="file" class="file-input">
+                                <input type="file" name="file" id="file" class="file-input" accept=".xls,.xlsx">
                             </div>
                             <div>
                                 <button type="button" onclick="window.location.href='/diplomnic'" class="home">На головну</button>

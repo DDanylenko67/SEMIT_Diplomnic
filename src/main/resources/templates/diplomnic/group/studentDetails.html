@@ -16,18 +16,18 @@
         </a>
         <div class="d-flex gap-3">
             <div class="borders">
-                <a href="/createGroup"  class="link-text">Створити нову групу</a>
+                <a href="/diplomnic/supervisor/createGroup"  class="link-text">Створити нову групу</a>
             </div>
             <div>
-                <a href="/suggestedThemes"  class="link-text">Запропоновані теми</a>
+                <a href="/diplomnic/supervisor/suggestedThemes"  class="link-text">Запропоновані теми</a>
             </div>
             <div class="lng borders">
                 <a href="#" class="lng__link">Завдання</a>
                 <div class="lng__list_wrapper">
                     <div class="lng__list">
-                        <a href="/diplomnic/listOfTask" >Список завдань</a>
-                        <a href="/checkTask">Перевірити завдання</a>
-                        <a href="/createTask">Додати нове завдання</a>
+                        <a href="/diplomnic/supervisor/listOfTask" >Список завдань</a>
+                        <a href="/diplomnic/supervisor/checkTask">Перевірити завдання</a>
+                        <a href="/diplomnic/supervisor/createTask">Додати нове завдання</a>
                     </div>
                 </div>
             </div>
@@ -51,7 +51,7 @@
                     <h5>Інформація про студента</h5>
                 </div>
                 <div class="form-body">
-                    <form th:action="@{/diplomnic/updateStudent/{id} (id=${student.id})} " enctype="multipart/form-data"  th:object="${student}" method="post">
+                    <form th:action="@{/diplomnic/supervisor/updateStudent/{id} (id=${student.id})} " enctype="multipart/form-data"  th:object="${student}" method="post">
                         <div class="form-group mb-3">
                             <label class="control-label"> Ім'я студента</label>
                             <input
@@ -114,11 +114,11 @@
                         </div>
 
                             <div class="center">
-                                <form th:action="@{/groupInfo/{id} (id=${student.id})}" >
+                                <form th:action="@{/diplomnic/supervisor/groupInfo/{id} (id=${student.id})}" >
                                     <input type="hidden" th:value="${group_id}" id="groupid" name="groupid">
                                     <button  class="home">Назад</button>
                                 </form>
-                                <form th:action="@{/deleteStudent/{id} (id=${student.id})}" >
+                                <form th:action="@{/diplomnic/supervisor/deleteStudent/{id} (id=${student.id})}" >
                                     <input type="hidden" th:value="${group_id}" id="group_id" name="group_id">
                                     <button class="submit-button" type="button" onclick="confirmSubmit()">Видалити з групи</button>
                                 </form>

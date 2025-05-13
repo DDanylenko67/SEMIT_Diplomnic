@@ -15,6 +15,45 @@
     <a class="navbar-brand" href="/diplomnic">
       <img src="/images/logo_red.jpg" alt="НТУ ХПІ" width="75px" height="75px">
     </a>
+    <div th:if="${#authorization.expression('hasRole(''ROLE_SUPERVISOR'')')}" class="d-flex gap-3">
+      <div class="borders">
+        <a href="/diplomnic/supervisor/createGroup"  class="link-text">Створити нову групу</a>
+      </div>
+      <div>
+        <a href="/diplomnic/supervisor/suggestedThemes"  class="link-text">Запропоновані теми</a>
+      </div>
+      <div class="lng borders">
+        <a href="#" class="lng__link">Завдання</a>
+        <div class="lng__list_wrapper">
+          <div class="lng__list">
+            <a href="/diplomnic/supervisor/listOfTask" >Список завдань</a>
+            <a href="/diplomnic/supervisor/checkTask">Перевірити завдання</a>
+            <a href="/diplomnic/supervisor/createTask">Додати нове завдання</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <diV th:if="${#authorization.expression('hasRole(''ROLE_STUDENT'')')}" class="d-flex gap-5">
+      <div>
+        <a href="/diplomnic/student/selectTheme"  class="link-text borders">Тема роботи</a>
+      </div>
+      <div>
+        <a href="/diplomnic/student/groupOfStudent"  class="link-text">Групи</a>
+      </div>
+      <div>
+        <a href="/diplomnic"  class="link-text borders">Завдання</a>
+      </div>
+    </diV>
+    <div class="lng">
+      <a href="#" class="lng__link">Обліковий запис</a>
+      <div class="lng__list_wrapper">
+        <div class="lng__list">
+          <a href="/information">Повна інформація</a>
+          <a href="/logout" >Вийти з облікового запису</a>
+        </div>
+      </div>
+    </div>
   </div>
 </nav>
   <div class="card-container" th:object="${taskAssignment}">
@@ -23,7 +62,7 @@
         <div class="center-card">
           <input type="hidden" th:value="${taskAssignment.id}" id="taskAssignment_id" name="taskAssignment">
           <div th:if="${#authorization.expression('hasRole(''ROLE_STUDENT'')')}">
-            <form th:action="@{/diplomnic/saveTaskAssignment/{id} (id=${taskAssignment.id})} " enctype="multipart/form-data"  method="post"  style="padding-left: 1rem">
+            <form th:action="@{/diplomnic/student/saveTaskAssignment/{id} (id=${taskAssignment.id})} " enctype="multipart/form-data"  method="post"  style="padding-left: 1rem">
               <div>
                 <p>Здати завдання</p>
               </div>
@@ -152,7 +191,7 @@
       <div class="card-right-container">
         <div class="top">
           <label for="name" class="card-label"><a>Назва завдання</a></label>
-          <textarea id="name" class="input-field" th:text="*{task.title + '&#10;' + 'Термін здачі: ' + task.deadline}" spellcheck="false"  readonly></textarea>
+          <textarea id="name" style=" overflow: hidden;" class="input-field" th:text="*{task.title + '&#10;' + 'Термін здачі: ' + task.deadline}" spellcheck="false"  readonly></textarea>
         </div>
         <div class="bottom">
           <label for="details" class="card-label"><a>Деталі до завдання</a></label>
@@ -190,8 +229,17 @@
 </nav>
 <script>
   function downloadZip(taskAssignmentId) {
-    window.location.href = "/files/download-all/" + taskAssignmentId;
+    window.location.href = "/diplomnic/supervisor/files/download-all/" + taskAssignmentId;
   }
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const ta = document.getElementById("name");
+    if (ta) {
+      ta.style.height = "auto";
+      ta.style.height = ta.scrollHeight + "px";
+    }
+  });
 </script>
 <script>
   document.getElementById("sendButtonSupervisor").addEventListener("click", function (event) {
@@ -260,12 +308,11 @@
 </script>
 <script>
   function updateStatus(taskAssignmentId, status) {
-    fetch(`/tasks/update-status/${taskAssignmentId}/${status}`, {
+    fetch(`/diplomnic/supervisor/tasks/update-status/${taskAssignmentId}/${status}`, {
       method: "GET"
     })
             .then(response => {
               if (response.ok) {
-                alert("Статус оновлено!");
               } else {
                 alert("Помилка оновлення статусу");
               }

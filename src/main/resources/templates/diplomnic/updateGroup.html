@@ -16,18 +16,18 @@
         </a>
         <div class="d-flex gap-3">
             <div class="borders">
-                <a href="/createGroup"  class="link-text">Створити нову групу</a>
+                <a href="/diplomnic/supervisor/createGroup"  class="link-text">Створити нову групу</a>
             </div>
             <div>
-                <a href="/suggestedThemes"  class="link-text">Запропоновані теми</a>
+                <a href="/diplomnic/supervisor/suggestedThemes"  class="link-text">Запропоновані теми</a>
             </div>
             <div class="lng borders">
                 <a href="#" class="lng__link">Завдання</a>
                 <div class="lng__list_wrapper">
                     <div class="lng__list">
-                        <a href="/diplomnic/listOfTask" >Список завдань</a>
-                        <a href="/checkTask">Перевірити завдання</a>
-                        <a href="/createTask">Додати нове завдання</a>
+                        <a href="/diplomnic/supervisor/listOfTask" >Список завдань</a>
+                        <a href="/diplomnic/supervisor/checkTask">Перевірити завдання</a>
+                        <a href="/diplomnic/supervisor/createTask">Додати нове завдання</a>
                     </div>
                 </div>
             </div>
@@ -51,7 +51,7 @@
                     <h5>Редагування групи</h5>
                 </div>
                 <div class="form-body">
-                    <form th:action="@{/diplomnic/updateGroup}" enctype="multipart/form-data"  th:object="${group}" method="post">
+                    <form th:action="@{/diplomnic/supervisor/updateGroup}" enctype="multipart/form-data"  th:object="${group}" method="post">
                         <div th:if="${params == 'exist'}">
                             <div class="message error" >Ви вже групу створили з такою назвою</div>
                         </div>

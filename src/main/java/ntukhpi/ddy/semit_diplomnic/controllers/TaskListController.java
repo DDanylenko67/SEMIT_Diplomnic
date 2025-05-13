@@ -34,13 +34,13 @@ public class TaskListController {
         this.studentService = studentService;
         this.themeService = themeService;
     }
-    @GetMapping("/diplomnic/listOfTask")
+    @GetMapping("/diplomnic/supervisor/listOfTask")
     public String listOfTask(Model model) {
         Supervisor supervisor = supervisorService.findSupervisorByEmail(getCurrentUser().getLogin());
         model.addAttribute("listOfTask", getListOfTask(supervisor));
         return "/diplomnic/task/listOfTask";
     }
-    @GetMapping("/diplomnic/supervisorCalendar")
+    @GetMapping("/diplomnic/supervisor/supervisorCalendar")
     public String supervisorCalendar(Model model) {
         Supervisor supervisor = supervisorService.findSupervisorByEmail(getCurrentUser().getLogin());
         LocalDate date = LocalDate.now();
@@ -52,7 +52,7 @@ public class TaskListController {
     }
 
 
-    @GetMapping("/diplomnic/supervisorCalendar/update")
+    @GetMapping("/diplomnic/supervisor/supervisorCalendar/update")
     public String previousMonth(@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date, Model model) {
         Supervisor supervisor = supervisorService.findSupervisorByEmail(getCurrentUser().getLogin());
         addDays(date, model);
@@ -62,14 +62,14 @@ public class TaskListController {
         return "/diplomnic/task/SupervisorCalendar";
     }
 
-    @GetMapping("/assignmentOfTask/{id}")
+    @GetMapping("/diplomnic/supervisor/assignmentOfTask/{id}")
     public String assignmentOfTask(@PathVariable Long id, Model model) {
         Task task = taskService.getTaskById(id);
         model.addAttribute("assignments", task.getAssignments());
         return "/diplomnic/task/assignmentOfTask";
     }
 
-    @GetMapping("/diplomnic/supervisorCalendar/assignmentDate")
+    @GetMapping("/diplomnic/supervisor/supervisorCalendar/assignmentDate")
     public String diplomnicAssignmentDate(@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date, Model model){
         Supervisor supervisor = supervisorService.findSupervisorByEmail(getCurrentUser().getLogin());
         addAssignments(supervisor, date, model);

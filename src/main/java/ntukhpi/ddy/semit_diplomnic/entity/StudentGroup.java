@@ -19,8 +19,6 @@ public class StudentGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, length = 10)
-    String code;
     @Column(nullable = false, length = 50)
     String groupName;
     @Enumerated(EnumType.STRING)
@@ -57,19 +55,11 @@ public class StudentGroup {
 
     }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
 
-    public String getCode() {
-        return code;
-    }
-
-    public StudentGroup(String groupName, groupType groupType, Supervisor supervisor, String code) {
+    public StudentGroup(String groupName, groupType groupType, Supervisor supervisor) {
         this.groupName = groupName;
         this.groupType = groupType;
         this.supervisor = supervisor;
-        this.code = code;
     }
     public Long getId() {
         return id;

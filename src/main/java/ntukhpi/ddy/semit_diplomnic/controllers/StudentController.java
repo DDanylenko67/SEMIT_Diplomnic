@@ -33,7 +33,7 @@ public class StudentController {
             this.taskAssignmentService = taskAssignmentService;
             this.taskService = taskService;
         }
-    @GetMapping("studentDetails/{id}")
+    @GetMapping("/diplomnic/supervisor/studentDetails/{id}")
     public String studentDetails(@PathVariable Long id, Model model, @RequestParam("group_id") Long groupId) {
         Student student = studentService.getStudentById(id);
         model.addAttribute("student", student);
@@ -55,7 +55,7 @@ public class StudentController {
         model.addAttribute("themeStatus", theme);
         return "/diplomnic/group/studentDetails";
     }
-    @PostMapping("/diplomnic/updateStudent/{id}")
+    @PostMapping("/diplomnic/supervisor/updateStudent/{id}")
     public String updateStudent(@PathVariable Long id,  Model model, @RequestParam(value = "themeUA", required = false) String themeUA,
                                 @RequestParam(value = "status", required = false) String status,
                                 @RequestParam(value = "themeENG", required = false) String themeENG,
@@ -106,7 +106,7 @@ public class StudentController {
         return "redirect:/diplomnic";
     }
 
-    @GetMapping("/selectTheme")
+    @GetMapping("/diplomnic/student/selectTheme")
     public String selectTheme(Model model){
             Student student = studentService.getStudentByEmail(getCurrentUser().getLogin());
             Theme theme = student.getTheme();
@@ -114,12 +114,12 @@ public class StudentController {
                 model.addAttribute("theme", theme);
             }
             else{
-                return "redirect:/suggestTheme";
+                return "redirect:/diplomnic/student/suggestTheme";
             }
             model.addAttribute("student", student);
             return "/diplomnic/theme/selectTheme";
     }
-    @PostMapping("/diplomnic/submitTheme")
+    @PostMapping("/diplomnic/student/submitTheme")
     public String submitTheme(Model model){
             Student student = studentService.getStudentByEmail(getCurrentUser().getLogin());
             Theme theme = student.getTheme();
@@ -127,7 +127,7 @@ public class StudentController {
             themeService.updateTheme(theme.getId(), theme);
             return "redirect:/diplomnic";
     }
-    @GetMapping("/suggestTheme")
+    @GetMapping("/diplomnic/student/suggestTheme")
     public String suggestTheme(Model model){
         Student student = studentService.getStudentByEmail(getCurrentUser().getLogin());
         List<StudentGroup> studentGroups = student.getGroups();
@@ -147,7 +147,7 @@ public class StudentController {
         model.addAttribute("themeENG", themeENG);
         return "/diplomnic/theme/suggestTheme";
     }
-    @PostMapping("/diplomnic/saveSuggestTheme")
+    @PostMapping("/diplomnic/student/saveSuggestTheme")
     public String saveSuggestTheme(Model model,
                                    @RequestParam String themeUA,
                                    @RequestParam(required = false) String themeENG,
@@ -176,7 +176,7 @@ public class StudentController {
         studentService.updateStudent(student.getId(), student);
         return "redirect:/diplomnic";
     }
-    @GetMapping("/admitTheme/student/{id}")
+    @GetMapping("/diplomnic/supervisor/admitTheme/student/{id}")
     public String admitTheme(Model model, @PathVariable Long id){
         Student student = studentService.getStudentById(id);
         Theme theme = student.getTheme();
@@ -184,14 +184,14 @@ public class StudentController {
         model.addAttribute("theme", theme);
         return "/diplomnic/theme/admitTheme";
     }
-    @PostMapping("/diplomnic/admitTheme{id}")
+    @PostMapping("/diplomnic/supervisor/admitTheme{id}")
     public String admitOfStudentTheme(Model model,@PathVariable Long id){
             Theme theme = themeService.getThemeById(id);
             theme.setStatus(status.done);
             themeService.updateTheme(theme.getId(), theme);
             return "redirect:/diplomnic";
     }
-    @PostMapping("/diplomnic/rejectTheme{id}" )
+    @PostMapping("/diplomnic/supervisor/rejectTheme{id}" )
     public String rejectTheme(Model model, @PathVariable Long id){
         Theme theme = themeService.getThemeById(id);
         theme.setStatus(status.rejected);

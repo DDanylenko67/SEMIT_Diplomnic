@@ -18,23 +18,22 @@
         </a>
         <div class="d-flex gap-3">
             <div class="borders">
-                <a href="/createGroup"  class="link-text">Створити нову групу</a>
+                <a href="/diplomnic/supervisor/createGroup"  class="link-text">Створити нову групу</a>
             </div>
             <div>
-                <a href="/suggestedThemes"  class="link-text">Запропоновані теми</a>
+                <a href="/diplomnic/supervisor/suggestedThemes"  class="link-text">Запропоновані теми</a>
             </div>
             <div class="lng borders">
                 <a href="#" class="lng__link">Завдання</a>
                 <div class="lng__list_wrapper">
                     <div class="lng__list">
-                        <a href="/diplomnic/listOfTask" >Список завдань</a>
-                        <a href="/checkTask">Перевірити завдання</a>
-                        <a href="/createTask">Додати нове завдання</a>
+                        <a href="/diplomnic/supervisor/listOfTask" >Список завдань</a>
+                        <a href="/diplomnic/supervisor/checkTask">Перевірити завдання</a>
+                        <a href="/diplomnic/supervisor/createTask">Додати нове завдання</a>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="lng">
             <a href="#" class="lng__link">Обліковий запис</a>
             <div class="lng__list_wrapper">
                 <div class="lng__list">
@@ -51,7 +50,7 @@
             <div th:object="${group}" class="group-block">
                 <div class="head">
                     <p th:text="${group.getGroupName()}" class="left"></p>
-                    <form th:action="@{/groupInfo/{id} (id=${group.id})}" class="update" >
+                    <form th:action="@{/diplomnic/supervisor/groupInfo/{id} (id=${group.id})}" class="update" >
                         <button class="non-button">Назад</button>
                     </form>
                 </div>
@@ -67,7 +66,7 @@
                             <p th:if="${student.getTheme() != null}" th:text="${student.getTheme().getThemeNameUA()}" class="theme"></p>
                         </div>
                         <div class="end-task">
-                            <form th:action="@{/studentDetails/{id} (id=${student.id})}" class="update" >
+                            <form th:action="@{/diplomnic/supervisor/studentDetails/{id} (id=${student.id})}" class="update" >
                                 <input type="hidden" th:value="${group.id}" id="group_id" name="group_id">
                                 <button class="submit-button">Переглянути деталі</button>
                             </form>
@@ -75,11 +74,14 @@
                     </div>
                 </div>
                 <div class="center">
-                    <form th:action="@{/diplomnic/addStudent/{group_id} (group_id=${group.getId()})}" >
+                    <form th:action="@{/diplomnic/supervisor/addStudent/{group_id} (group_id=${group.getId()})}" >
                         <button class="import-button">Додати студента</button>
                     </form>
-                    <form th:action="@{/diplomnic/saveStudents/{id} (id=${group.id})}" enctype="multipart/form-data" method="post">
-                        <input type="file" name="file" id="file" class="file-input" onchange="toggleButtonVisibility()">
+                    <form th:action="@{/diplomnic/supervisor/exportGroup/{group_id} (group_id=${group.getId()})}">
+                        <button class="export">Експортувати список групи у Excel</button>
+                    </form>
+                    <form th:action="@{/diplomnic/supervisor/saveStudents/{id} (id=${group.id})}" enctype="multipart/form-data" method="post">
+                        <input type="file" name="file" id="file" class="file-input" onchange="toggleButtonVisibility()" accept=".xls,.xlsx">
                         <button type="submit" class="import-button " id="submitBtn" style="display: none;">Додати студентів з Excel файлу</button>
                     </form>
                 </div>

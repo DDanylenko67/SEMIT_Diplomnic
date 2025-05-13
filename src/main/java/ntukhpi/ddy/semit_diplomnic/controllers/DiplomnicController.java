@@ -102,7 +102,7 @@ public class DiplomnicController {
         return "redirect:/diplomnic";
     }
 
-    @GetMapping("/diplomnic/done")
+    @GetMapping("/diplomnic/student/done")
     public String diplomnicDone(Model model) {
         Student student = studentService.getStudentByEmail(getCurrentUser().getLogin());
         List<TaskAssignment> taskToFind = student.getAssignments();
@@ -111,7 +111,7 @@ public class DiplomnicController {
         model.addAttribute("task", findTaskByStatus(taskToFind, status.done));
         return "/diplomnic/diplomnic";
     }
-    @GetMapping("/diplomnic/pass")
+    @GetMapping("/diplomnic/student/pass")
     public String diplomnicPass(Model model) {
         Student student = studentService.getStudentByEmail(getCurrentUser().getLogin());
         List<TaskAssignment> taskToFind = student.getAssignments();
@@ -120,7 +120,7 @@ public class DiplomnicController {
         model.addAttribute("task", findTaskByStatus(taskToFind, status.pass));
         return "/diplomnic/diplomnic";
     }
-    @GetMapping("/diplomnic/inProgress")
+    @GetMapping("/diplomnic/student/inProgress")
     public String diplomnicInProgress(Model model) {
         Student student = studentService.getStudentByEmail(getCurrentUser().getLogin());
         List<TaskAssignment> taskToFind = student.getAssignments();
@@ -139,7 +139,7 @@ public class DiplomnicController {
         return task;
     }
 
-    @GetMapping("/checkTask")
+    @GetMapping("/diplomnic/supervisor/checkTask")
     public String checkTask(Model model) {
         Supervisor supervisor = supervisorService.findSupervisorByEmail(getCurrentUser().getLogin());
         List<StudentGroup> groups = studentGroupService.getStudentsGroupBySupervisor(supervisor);
@@ -154,7 +154,7 @@ public class DiplomnicController {
     }
 
 
-    @GetMapping("/diplomnic/calendar")
+    @GetMapping("/diplomnic/student/calendar")
     public String calendar(Model model){
         Student student = studentService.getStudentByEmail(getCurrentUser().getLogin());
         LocalDate date = LocalDate.now();
@@ -164,7 +164,7 @@ public class DiplomnicController {
         model.addAttribute("month", getMonthName(date));
         return "/diplomnic/calendar";
     }
-    @GetMapping("/diplomnic/calendar/update")
+    @GetMapping("/diplomnic/student/calendar/update")
     public String previousMonth(@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date, Model model) {
         Student student = studentService.getStudentByEmail(getCurrentUser().getLogin());
         addDays(date, model);
@@ -174,7 +174,7 @@ public class DiplomnicController {
         return "/diplomnic/calendar";
     }
 
-    @GetMapping("suggestedThemes")
+    @GetMapping("/diplomnic/supervisor/suggestedThemes")
     public String suggestedThemes(Model model) {
         Supervisor supervisor = supervisorService.findSupervisorByEmail(getCurrentUser().getLogin());
         List<Theme> themes = themeService.getThemesBySupervisorId(supervisor.getId());
@@ -188,7 +188,7 @@ public class DiplomnicController {
         return "/diplomnic/theme/suggestedThemes";
     }
 
-    @GetMapping("/diplomnic/groupOfStudent")
+    @GetMapping("/diplomnic/student/groupOfStudent")
     public String groupOfStudent(Model model){
         Student student = studentService.getStudentByEmail(getCurrentUser().getLogin());
         List<StudentGroup> studentGroups = student.getGroups();

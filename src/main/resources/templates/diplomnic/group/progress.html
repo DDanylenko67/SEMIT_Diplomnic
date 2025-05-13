@@ -18,18 +18,18 @@
         </a>
         <div class="d-flex gap-3">
             <div class="borders">
-                <a href="/createGroup"  class="link-text">Створити нову групу</a>
+                <a href="/diplomnic/supervisor/createGroup"  class="link-text">Створити нову групу</a>
             </div>
             <div>
-                <a href="/suggestedThemes"  class="link-text">Запропоновані теми</a>
+                <a href="/diplomnic/supervisor/suggestedThemes"  class="link-text">Запропоновані теми</a>
             </div>
             <div class="lng borders">
                 <a href="#" class="lng__link">Завдання</a>
                 <div class="lng__list_wrapper">
                     <div class="lng__list">
-                        <a href="/diplomnic/listOfTask" >Список завдань</a>
-                        <a href="/checkTask">Перевірити завдання</a>
-                        <a href="/createTask">Додати нове завдання</a>
+                        <a href="/diplomnic/supervisor/listOfTask" >Список завдань</a>
+                        <a href="/diplomnic/supervisor/checkTask">Перевірити завдання</a>
+                        <a href="/diplomnic/supervisor/createTask">Додати нове завдання</a>
                     </div>
                 </div>
             </div>
@@ -51,7 +51,7 @@
             <div th:object="${group}" class="group-block">
                 <div class="head">
                     <p th:text="${group.getGroupName()}" class="left"></p>
-                    <form th:action="@{/groupInfo/{id} (id=${group.id})}" class="update" >
+                    <form th:action="@{/diplomnic/supervisor/groupInfo/{id} (id=${group.id})}" class="update" >
                         <button class="non-button">Назад</button>
                     </form>
                 </div>
@@ -70,7 +70,7 @@
                                 <p th:text="'Виконано завдань: ' + ${group.getStatusByStudent(student.getId())} + '/' + ${group.getTasks().size()}"></p>
                             </div>
                              <div th:if="${group.getTasks().size() != 0}">
-                                 <form th:action="@{/studentAssigments/{id} (id=${student.id})}" class="update" >
+                                 <form th:action="@{/diplomnic/supervisor/studentAssigments/{id} (id=${student.id})}" class="update" >
                                     <input type="hidden" th:value="${group.id}" id="group_id" name="group_id">
                                     <button class="submit-button">Перегляняти деталі</button>
                                 </form>

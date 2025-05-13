@@ -19,18 +19,18 @@
         </a>
         <div class="d-flex gap-3">
             <div class="borders">
-                <a href="/createGroup"  class="link-text">Створити нову групу</a>
+                <a href="/diplomnic/supervisor/createGroup"  class="link-text">Створити нову групу</a>
             </div>
             <div>
-                <a href="/suggestedThemes"  class="link-text">Запропоновані теми</a>
+                <a href="/diplomnic/supervisor/suggestedThemes"  class="link-text">Запропоновані теми</a>
             </div>
             <div class="lng borders">
                 <a href="#" class="lng__link">Завдання</a>
                 <div class="lng__list_wrapper">
                     <div class="lng__list">
-                        <a href="/diplomnic/listOfTask" >Список завдань</a>
-                        <a href="/checkTask">Перевірити завдання</a>
-                        <a href="/createTask">Додати нове завдання</a>
+                        <a href="/diplomnic/supervisor/listOfTask" >Список завдань</a>
+                        <a href="/diplomnic/supervisor/checkTask">Перевірити завдання</a>
+                        <a href="/diplomnic/supervisor/createTask">Додати нове завдання</a>
                     </div>
                 </div>
             </div>
@@ -61,12 +61,12 @@
                 </div>
                 <div class="tasks-block">
                     <div class="carousel">
-                        <a th:href="@{/diplomnic/supervisorCalendar/update(date=${date.minusMonths(1)})}" class="arrow left">❮</a>
+                        <a th:href="@{/diplomnic/supervisor/supervisorCalendar/update(date=${date.minusMonths(1)})}" class="arrow left">❮</a>
                         <div class="date">
                             <span ><a th:text="${month}"></a></span>
                             <span class="year"><a th:text="${date.getYear()}"></a></span>
                         </div>
-                        <a th:href="@{/diplomnic/supervisorCalendar/update(date=${date.plusMonths(1)})}" class="arrow right">❯</a>
+                        <a th:href="@{/diplomnic/supervisor/supervisorCalendar/update(date=${date.plusMonths(1)})}" class="arrow right">❯</a>
                     </div>
                 </div>
                 <div class="tasks-block center">
@@ -82,7 +82,7 @@
                              th:class="${tasks.![deadline.getDayOfMonth()].contains(day) ? 'day task' : 'day'}"
                              th:style="${day == 0 ? 'visibility: hidden;' : ''}">
                             <a th:if="${tasks.![deadline.getDayOfMonth()].contains(day)}"
-                               th:href="@{/diplomnic/supervisorCalendar/assignmentDate(date=${#dates.format(#dates.create(date.getYear(), date.monthValue, day), 'yyyy-MM-dd')})}"
+                               th:href="@{/diplomnic/supervisor/supervisorCalendar/assignmentDate(date=${#dates.format(#dates.create(date.getYear(), date.monthValue, day), 'yyyy-MM-dd')})}"
                                th:text="${day}"></a>
 
                             <span th:unless="${tasks.![deadline.getDayOfMonth()].contains(day)}"
@@ -142,9 +142,9 @@
 <script>
     document.getElementById("toggleSwitch").addEventListener("change", function() {
         if (this.checked) {
-            window.location.href = "/diplomnic/supervisorCalendar";
+            window.location.href = "/diplomnic/supervisor/supervisorCalendar";
         } else {
-            window.location.href = "/diplomnic/listOfTask";
+            window.location.href = "/diplomnic/supervisor/listOfTask";
         }
     });
 </script>

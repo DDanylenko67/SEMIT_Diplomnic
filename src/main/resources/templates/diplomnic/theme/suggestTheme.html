@@ -14,6 +14,26 @@
     <a class="navbar-brand" href="/diplomnic">
       <img src="/images/logo_red.jpg" alt="НТУ ХПІ" width="75px" height="75px">
     </a>
+    <diV class="d-flex gap-5">
+      <div>
+        <a href="/diplomnic/student/selectTheme"  class="link-text borders">Тема роботи</a>
+      </div>
+      <div>
+        <a href="/diplomnic/student/groupOfStudent"  class="link-text">Групи</a>
+      </div>
+      <div>
+        <a href="/diplomnic"  class="link-text borders">Завдання</a>
+      </div>
+    </diV>
+    <div class="lng">
+      <a href="#" class="lng__link">Обліковий запис</a>
+      <div class="lng__list_wrapper">
+        <div class="lng__list">
+          <a href="/information">Повна інформація</a>
+          <a href="/logout" >Вийти з облікового запису</a>
+        </div>
+      </div>
+    </div>
   </div>
 </nav>
 <main>
@@ -24,7 +44,7 @@
           <h5>Тема роботи</h5>
         </div>
         <div class="form-body">
-          <form th:action="@{/diplomnic/saveSuggestTheme} "  th:object="${student}" method="post">
+          <form th:action="@{/diplomnic/student/saveSuggestTheme} "  th:object="${student}" method="post">
             <div class="form-group mb-3">
               <label class="control-label"> Ім'я студента</label>
               <input

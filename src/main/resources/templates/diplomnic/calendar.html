@@ -17,29 +17,25 @@
         <a class="navbar-brand" href="/diplomnic">
             <img src="/images/logo_red.jpg" alt="НТУ ХПІ" width="75px" height="75px">
         </a>
-        <diV th:if="${#authorization.expression('hasRole(''ROLE_STUDENT'')')}" class="d-flex gap-5">
+        <diV class="d-flex gap-5">
             <div>
-                <a href="/selectTheme"  class="link-text">Обрати тему</a>
+                <a href="/diplomnic/student/selectTheme"  class="link-text borders">Тема роботи</a>
             </div>
             <div>
-                <a href="/diplomnic/groupOfStudent"  class="link-text">Мої групи</a>
+                <a href="/diplomnic/student/groupOfStudent"  class="link-text">Групи</a>
+            </div>
+            <div>
+                <a href="/diplomnic"  class="link-text borders">Завдання</a>
             </div>
         </diV>
-        <header>
-            <div class="menu-btn">
-                <span></span>
-                <span></span>
-                <span></span>
+        <div class="lng">
+            <a href="#" class="lng__link">Обліковий запис</a>
+            <div class="lng__list_wrapper">
+                <div class="lng__list">
+                    <a href="/information">Повна інформація</a>
+                    <a href="/logout" >Вийти з облікового запису</a>
+                </div>
             </div>
-        </header>
-
-        <div class="menu">
-            <nav>
-                <ul>
-                    <li><a href="/logout">Вихід з облікового запису</a></li>
-                    <li><a href="#">Налаштування</a></li>
-                </ul>
-            </nav>
         </div>
     </div>
 </nav>
@@ -59,12 +55,12 @@
                 </div>
                     <div class="tasks-block">
                         <div class="carousel">
-                            <a th:href="@{/diplomnic/calendar/update(date=${date.minusMonths(1)})}" class="arrow left">❮</a>
+                            <a th:href="@{/diplomnic/student/calendar/update(date=${date.minusMonths(1)})}" class="arrow left">❮</a>
                             <div class="date">
                                 <span ><a th:text="${month}"></a></span>
                                 <span class="year"><a th:text="${date.getYear()}"></a></span>
                             </div>
-                            <a th:href="@{/diplomnic/calendar/update(date=${date.plusMonths(1)})}" class="arrow right">❯</a>
+                            <a th:href="@{/diplomnic/student/calendar/update(date=${date.plusMonths(1)})}" class="arrow right">❯</a>
                         </div>
                     </div>
                 <div class="tasks-block center">
@@ -80,7 +76,7 @@
                              th:class="${assignments.![task.deadline.getDayOfMonth()].contains(day) ? 'day task' : 'day'}"
                              th:style="${day == 0 ? 'visibility: hidden;' : ''}">
                             <a th:if="${assignments.![task.deadline.getDayOfMonth()].contains(day)}"
-                               th:href="@{/diplomnic/calendar/assignmentDate(date=${#dates.format(#dates.create(date.getYear(), date.monthValue, day), 'yyyy-MM-dd')})}"
+                               th:href="@{/diplomnic/student/calendar/assignmentDate(date=${#dates.format(#dates.create(date.getYear(), date.monthValue, day), 'yyyy-MM-dd')})}"
                                th:text="${day}"></a>
 
                             <span th:unless="${assignments.![task.deadline.getDayOfMonth()].contains(day)}"
@@ -141,7 +137,7 @@
 <script>
     document.getElementById("toggleSwitch").addEventListener("change", function() {
         if (this.checked) {
-            window.location.href = "/diplomnic/calendar";
+            window.location.href = "/diplomnic/student/calendar";
         } else {
             window.location.href = "/diplomnic";
         }

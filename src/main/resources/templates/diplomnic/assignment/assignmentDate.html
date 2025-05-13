@@ -18,27 +18,23 @@
     </a>
     <diV th:if="${#authorization.expression('hasRole(''ROLE_STUDENT'')')}" class="d-flex gap-5">
       <div>
-        <a href="/selectTheme"  class="link-text">Обрати тему</a>
+        <a href="/diplomnic/student/selectTheme"  class="link-text borders">Тема роботи</a>
       </div>
       <div>
-        <a href="/groupOfStudent"  class="link-text">Мої групи</a>
+        <a href="/diplomnic/student/groupOfStudent"  class="link-text">Групи</a>
+      </div>
+      <div>
+        <a href="/diplomnic"  class="link-text borders">Завдання</a>
       </div>
     </diV>
-    <header>
-      <div class="menu-btn">
-        <span></span>
-        <span></span>
-        <span></span>
+    <div class="lng">
+      <a href="#" class="lng__link">Обліковий запис</a>
+      <div class="lng__list_wrapper">
+        <div class="lng__list">
+          <a href="/information">Повна інформація</a>
+          <a href="/logout" >Вийти з облікового запису</a>
+        </div>
       </div>
-    </header>
-
-    <div class="menu">
-      <nav>
-        <ul>
-          <li><a href="/logout">Вихід з облікового запису</a></li>
-          <li><a href="#">Налаштування</a></li>
-        </ul>
-      </nav>
     </div>
   </div>
 </nav>
@@ -47,7 +43,7 @@
       <div class="diplomnik-card">
         <div class="head">
           <div class="right-corner">
-            <form th:action="@{/diplomnic/calendar}" class="update" >
+            <form th:action="@{/diplomnic/student/calendar}" class="update" >
               <button class="non-button">Назад</button>
             </form>
           </div>
@@ -130,7 +126,7 @@
 <script>
   document.getElementById("toggleSwitch").addEventListener("change", function() {
     if (this.checked) {
-      window.location.href = "/diplomnic/calendar";
+      window.location.href = "/diplomnic/student/calendar";
     } else {
       window.location.href = "/diplomnic";
     }

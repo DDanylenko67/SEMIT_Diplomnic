@@ -9,42 +9,52 @@
     <title>Дипломник | Інформація про користувача</title>
 </head>
 <body>
-<diV th:if="${#authorization.expression('hasRole(''ROLE_SUPERVISOR'')')}">
-    <nav class="navbar navbar-expand-lg nav-dark" style="background-color: #9F1C21;">
-        <div class="container">
-            <a class="navbar-brand" href="/diplomnic">
-                <img src="/images/logo_red.jpg" alt="НТУ ХПІ" width="75px" height="75px">
-            </a>
-            <div class="d-flex gap-3">
-                <div class="borders">
-                    <a href="/createGroup"  class="link-text">Створити нову групу</a>
-                </div>
-                <div>
-                    <a href="/suggestedThemes"  class="link-text">Запропоновані теми</a>
-                </div>
-                <div class="lng borders">
-                    <a href="#" class="lng__link">Завдання</a>
-                    <div class="lng__list_wrapper">
-                        <div class="lng__list">
-                            <a href="/diplomnic/listOfTask" >Список завдань</a>
-                            <a href="/checkTask">Перевірити завдання</a>
-                            <a href="/createTask">Додати нове завдання</a>
-                        </div>
-                    </div>
-                </div>
+<nav class="navbar navbar-expand-lg nav-dark" style="background-color: #9F1C21;">
+    <div class="container">
+        <a class="navbar-brand" href="/diplomnic">
+            <img src="/images/logo_red.jpg" alt="НТУ ХПІ" width="75px" height="75px">
+        </a>
+        <div th:if="${#authorization.expression('hasRole(''ROLE_SUPERVISOR'')')}" class="d-flex gap-3">
+            <div class="borders">
+                <a href="/diplomnic/supervisor/createGroup"  class="link-text">Створити нову групу</a>
             </div>
-            <div class="lng">
-                <a href="#" class="lng__link">Обліковий запис</a>
+            <div>
+                <a href="/diplomnic/supervisor/suggestedThemes"  class="link-text">Запропоновані теми</a>
+            </div>
+            <div class="lng borders">
+                <a href="#" class="lng__link">Завдання</a>
                 <div class="lng__list_wrapper">
                     <div class="lng__list">
-                        <a href="/information">Повна інформація</a>
-                        <a href="/logout" >Вийти з облікового запису</a>
+                        <a href="/diplomnic/supervisor/listOfTask" >Список завдань</a>
+                        <a href="/diplomnic/supervisor/checkTask">Перевірити завдання</a>
+                        <a href="/diplomnic/supervisor/createTask">Додати нове завдання</a>
                     </div>
                 </div>
             </div>
         </div>
-    </nav>
-</diV>
+
+        <diV th:if="${#authorization.expression('hasRole(''ROLE_STUDENT'')')}" class="d-flex gap-5">
+            <div>
+                <a href="/diplomnic/student/selectTheme"  class="link-text borders">Тема роботи</a>
+            </div>
+            <div>
+                <a href="/diplomnic/student/groupOfStudent"  class="link-text">Групи</a>
+            </div>
+            <div>
+                <a href="/diplomnic"  class="link-text borders">Завдання</a>
+            </div>
+        </diV>
+        <div class="lng">
+            <a href="#" class="lng__link">Обліковий запис</a>
+            <div class="lng__list_wrapper">
+                <div class="lng__list">
+                    <a href="/information">Повна інформація</a>
+                    <a href="/logout" >Вийти з облікового запису</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
 <diV th:if="${#authorization.expression('hasRole(''ROLE_STUDENT'')')}">
 
 </diV>

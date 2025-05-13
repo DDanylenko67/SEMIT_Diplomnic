@@ -70,12 +70,24 @@
     border-radius: 10px;
     margin-left: 0.4rem;
 }
+.export{
+    padding-left: 1rem;
+    padding-right: 1rem;
+    border: 0;
+    color: white;
+    height: 3rem;
+    background-color: #198754;
+    border-radius: 10px;
+    margin-left: 0.4rem;
+}
 .file-input{
     background-color: #9F1C21;
     color: white;
     border-radius: 10px;
 }
 .end-task p.status-font{
+    margin-left: 1rem;
+    min-width: 300px;
     color: black;
     font-weight: 700;
     font-size: 20px;

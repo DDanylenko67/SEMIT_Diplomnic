@@ -20,9 +20,9 @@ public class Task {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 250)
     private String title;
-    @Column(nullable = false, length = 500)
+    @Column(nullable = false, length = 700)
     private String description;
     @Column(nullable = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd")

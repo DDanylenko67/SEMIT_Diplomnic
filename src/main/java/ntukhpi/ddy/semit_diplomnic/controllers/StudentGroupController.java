@@ -1,16 +1,15 @@
 package ntukhpi.ddy.semit_diplomnic.controllers;
 
+import jakarta.servlet.http.HttpServletResponse;
 import ntukhpi.ddy.semit_diplomnic.entity.*;
+import ntukhpi.ddy.semit_diplomnic.entity.tools.UserDto;
 import ntukhpi.ddy.semit_diplomnic.enums.groupType.groupType;
 import ntukhpi.ddy.semit_diplomnic.enums.status.status;
 import ntukhpi.ddy.semit_diplomnic.service.*;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -20,14 +19,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static ntukhpi.ddy.semit_diplomnic.entity.SecureRandomCodeGenerator.generateSecureRandomCode;
-
 @Controller
-public class groupController {
+public class StudentGroupController {
     private final UserService userService;
     private final StudentGroupService studentGroupService;
     private final SupervisorService supervisorService;
@@ -35,10 +34,10 @@ public class groupController {
     private final ThemeService themeService;
     private final TaskAssignmentService taskAssignmentService;
     private final TaskService taskService;
-    public groupController(UserService userService, StudentGroupService studentGroupService,
-                           SupervisorService supervisorService, StudentService studentService,
-                           ThemeService themeService, TaskAssignmentService taskAssignmentService,
-                           TaskService taskService) {
+    public StudentGroupController(UserService userService, StudentGroupService studentGroupService,
+                                  SupervisorService supervisorService, StudentService studentService,
+                                  ThemeService themeService, TaskAssignmentService taskAssignmentService,
+                                  TaskService taskService) {
         this.userService = userService;
         this.studentGroupService = studentGroupService;
         this.supervisorService = supervisorService;
@@ -47,28 +46,28 @@ public class groupController {
         this.taskAssignmentService = taskAssignmentService;
         this.taskService = taskService;
     }
-    @GetMapping("/createGroup")
+    @GetMapping("/diplomnic/supervisor/createGroup")
     public String createGroup(Model model) {
         Supervisor supervisor = supervisorService.findSupervisorByEmail(getCurrentUser().getLogin());
-        StudentGroup newGroup = new StudentGroup("", groupType.bachelor, supervisor, "");
+        StudentGroup newGroup = new StudentGroup("", groupType.bachelor, supervisor);
         model.addAttribute("group", newGroup);
         return "/diplomnic/createGroup";
 
     }
-    @GetMapping("groupInfo/{id}")
+    @GetMapping("/diplomnic/supervisor/groupInfo/{id}")
     public String groupInfo(@PathVariable Long id, Model model) {
         StudentGroup group = studentGroupService.getStudentGroupById(id);
         model.addAttribute("group", group);
         return "/diplomnic/groupInfo";
     }
-    @GetMapping("/updateGroup/{id}")
+    @GetMapping("/diplomnic/supervisor/updateGroup/{id}")
     public String updateGroup(@PathVariable Long id, Model model) {
         StudentGroup group = studentGroupService.getStudentGroupById(id);
         model.addAttribute("group", group);
         return "/diplomnic/updateGroup";
     }
 
-    @GetMapping("/progress/{id}")
+    @GetMapping("/diplomnic/supervisor/progress/{id}")
     public String progress(Model model, @PathVariable Long id) {
         StudentGroup group = studentGroupService.getStudentGroupById(id);
         model.addAttribute("group", group);
@@ -77,7 +76,7 @@ public class groupController {
         return "/diplomnic/group/progress";
     }
 
-    @GetMapping("/groupTasks/{id}")
+    @GetMapping("/diplomnic/supervisor/groupTasks/{id}")
     public String groupTasks(Model model, @PathVariable Long id) {
         StudentGroup group = studentGroupService.getStudentGroupById(id);
         List<Task> tasks = group.getTasks();
@@ -87,7 +86,7 @@ public class groupController {
     }
 
 
-    @GetMapping("/groupList/{id}")
+    @GetMapping("/diplomnic/supervisor/groupList/{id}")
     public String groupList(Model model, @PathVariable Long id) {
         StudentGroup group = studentGroupService.getStudentGroupById(id);
         List<Student> students = group.getStudents();
@@ -96,7 +95,7 @@ public class groupController {
         return "/diplomnic/group/groupList";
     }
 
-    @GetMapping("/diplomnic/addStudent/{group_id}")
+    @GetMapping("/diplomnic/supervisor/addStudent/{group_id}")
     public String addStudent(Model model, @PathVariable Long group_id) {
         StudentGroup studentGroup = studentGroupService.getStudentGroupById(group_id);
         List<StudentGroup> studentGroups = new ArrayList<>();
@@ -109,7 +108,7 @@ public class groupController {
         return "/diplomnic/group/createStudent";
     }
 
-    @PostMapping("/diplomnic/saveStudent")
+    @PostMapping("/diplomnic/supervisor/saveStudent")
     public String saveStudent(@ModelAttribute("student") Student student,
                               @RequestParam(value = "themeUA", required = false) String themeUA, @RequestParam("group_id") Long groupId) {
         Supervisor supervisor = supervisorService.findSupervisorByEmail(getCurrentUser().getLogin());
@@ -137,7 +136,7 @@ public class groupController {
             studentGroupService.updateStudentGroup(studentGroup.getId(), studentGroup);
             addTask(studentGroup, studentFromDB);
         }
-        return  "redirect:/groupList/" + groupId;
+        return  "redirect:/diplomnic/supervisor/groupList/" + groupId;
     }
 
     public void addTask(StudentGroup studentGroup, Student studentFromDB) {
@@ -153,16 +152,16 @@ public class groupController {
         studentService.updateStudent(studentFromDB.getId(), studentFromDB);
     }
 
-    @PostMapping("diplomnic/saveStudents/{id}")
+    @PostMapping("/diplomnic/supervisor/saveStudents/{id}")
     public String saveStudents(Model model, @PathVariable Long id, @RequestParam("file") MultipartFile file){
         Supervisor supervisor = supervisorService.findSupervisorByEmail(getCurrentUser().getLogin());
         StudentGroup studentGroup = studentGroupService.getStudentGroupById(id);
         updateGroupByExcel(file, supervisor, studentGroup);
-        return  "redirect:/groupList/" + id;
+        return  "redirect:/diplomnic/supervisor/groupList/" + id;
     }
 
 
-    @PostMapping("/diplomnic/updateGroup")
+    @PostMapping("/diplomnic/supervisor/updateGroup")
     public String updateOldGroup(@RequestParam Long id,
                                  @ModelAttribute("group") StudentGroup groupToSave,
                                  Model model) {
@@ -181,14 +180,13 @@ public class groupController {
 
         return "redirect:/diplomnic";
     }
-    @PostMapping("/diplomnic/saveGroup")
+    @PostMapping("/diplomnic/supervisor/saveGroup")
     public String saveGroup(@ModelAttribute StudentGroup group,
                               @RequestParam("file") MultipartFile file,
                               @ModelAttribute("group") StudentGroup groupToSave,
                               Model model) {
         Supervisor supervisor = supervisorService.findSupervisorByEmail(getCurrentUser().getLogin());
         groupToSave.setSupervisor(supervisor);
-        groupToSave.setCode(generateSecureRandomCode(10));
         if(studentGroupService.getStudentGroupByName(groupToSave.getGroupName(), supervisor) == null){
             studentGroupService.saveStudentGroup(groupToSave);
         }else{
@@ -204,7 +202,7 @@ public class groupController {
 
     }
 
-    @GetMapping("/deleteStudent/{id}")
+    @GetMapping("/diplomnic/supervisor/deleteStudent/{id}")
     public String deleteStudentFromGroup(Model model, @PathVariable Long id, @RequestParam("group_id") Long groupId){
         StudentGroup studentGroup = studentGroupService.getStudentGroupById(groupId);
         Student student = studentService.getStudentById(id);
@@ -224,19 +222,48 @@ public class groupController {
                 }
             }
         }
-        return "redirect:/groupList/" + groupId;
+        return "redirect:/diplomnic/supervisor/groupList/" + groupId;
     }
 
-    @GetMapping("/studentAssigments/{id}")
+    @GetMapping("/diplomnic/supervisor/studentAssigments/{id}")
     public String studentAssignment(Model model, @PathVariable Long id, @RequestParam("group_id") Long groupId){
         StudentGroup studentGroup = studentGroupService.getStudentGroupById(groupId);
         Student student = studentService.getStudentById(id);
-        for(TaskAssignment taskAssignment : student.getAssignmentByGroup(groupId)){
-            System.out.println(taskAssignment.getTask().getTitle());
-        }
         model.addAttribute("group", studentGroup);
         model.addAttribute("student", student);
         return "/diplomnic/group/assignment";
+    }
+
+    @GetMapping("/diplomnic/supervisor/exportGroup/{group_id}")
+    public void ExportGroup(HttpServletResponse response, Model model, @PathVariable Long group_id) throws IOException {
+        StudentGroup studentGroup = studentGroupService.getStudentGroupById(group_id);
+        List<Student> students = studentGroup.getStudents();
+
+        response.setContentType("application/octet-stream");
+        String fileName = URLEncoder.encode(studentGroup.getGroupName() + ".xlsx", StandardCharsets.UTF_8);
+        response.setHeader("Content-Disposition", "attachment; filename=" + fileName +".xlsx");
+
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Students");
+        int rowCount = 0;
+        for(Student student : students){
+            Row row = sheet.createRow(rowCount);
+            row.createCell(0).setCellValue(student.getName());
+            row.createCell(1).setCellValue(student.getEmail());
+            row.createCell(2).setCellValue(student.getUniversityGroup());
+            row.createCell(3).setCellValue(studentGroup.getSupervisor().getName());
+            if(student.getTheme() != null){
+                if(!student.getTheme().getThemeNameUA().isEmpty()){
+                    row.createCell(4).setCellValue(student.getTheme().getThemeNameUA());
+                }
+                if(!student.getTheme().getThemeNameENG().isEmpty()){
+                    row.createCell(5).setCellValue(student.getTheme().getThemeNameENG());
+                }
+            }
+            rowCount++;
+        }
+        workbook.write(response.getOutputStream());
+        workbook.close();
     }
 
 
@@ -307,17 +334,19 @@ public class groupController {
                 String email = row.getCell(1).getStringCellValue();
                 String universityGroup = row.getCell(2).getStringCellValue();
                 if(userService.findUserByEmail(email) == null){
-                    if (email.endsWith("@khpi.edu.ua") || email.endsWith("@gmail.com")){
+                    if (email.endsWith("khpi.edu.ua") || email.endsWith("gmail.com")){
                         List<StudentGroup> groups = new ArrayList<>();
                         groups.add(studentGroup);
                         UserDto student = new UserDto(studentName, email, universityGroup, groups, "password");
                         userService.saveUserStudent(student);
                         Student studentFromDB = studentService.getStudentByEmail(email);
-                        if(!themeUA.equals("") || !themeEng.equals("")){
-                            if(!themeUA.equals(" ") || !themeEng.equals(" ")){
-                                Theme theme = new Theme(themeUA, themeEng, status.checking, supervisor, studentFromDB);
-                                themeService.saveTheme(theme);
+
+                        if(!themeUA.isEmpty()){
+                            if(!themeEng.isEmpty()){
+                                themeEng = "";
                             }
+                            Theme theme = new Theme(themeUA, themeEng, status.checking, supervisor, studentFromDB);
+                            themeService.saveTheme(theme);
                         }
                         students.add(studentService.getStudentByEmail(email));
                     }

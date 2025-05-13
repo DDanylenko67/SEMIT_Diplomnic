@@ -1,11 +1,13 @@
-package ntukhpi.ddy.semit_diplomnic.entity;
+package ntukhpi.ddy.semit_diplomnic.entity.tools;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import ntukhpi.ddy.semit_diplomnic.entity.Role;
+import ntukhpi.ddy.semit_diplomnic.entity.StudentGroup;
+import ntukhpi.ddy.semit_diplomnic.entity.Supervisor;
+import ntukhpi.ddy.semit_diplomnic.entity.Theme;
 
 import java.util.List;
 
